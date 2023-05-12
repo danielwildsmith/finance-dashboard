@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "exclude": [
-      "server/"
+      "./server/"
     ],
     "compilerOptions": {
         "target": "ES6",
