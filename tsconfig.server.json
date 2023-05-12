@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "exclude": [
+      "src/"
+    ],
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "CommonJS"
+    }
+}
