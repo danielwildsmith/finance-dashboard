@@ -1,9 +1,11 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { plaidClient } from './config';
 
 dotenv.config();
+console.log(plaidClient);
 
-const app: Express = express();
+const app : Express = express();
 const port = process.env.PORT || 8000;
 
 app.get('/', (req: Request, res: Response) => {
