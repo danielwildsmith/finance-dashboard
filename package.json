@@ -9,11 +9,13 @@
     "@types/jest": "^27.5.2",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "plaid": "^13.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-plaid-link": "^3.4.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -24,6 +26,7 @@
     "eject": "react-scripts eject",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server/server.js\""
   },
+  "proxy": "http://localhost:8000/",
   "eslintConfig": {
     "extends": [
       "react-app",
