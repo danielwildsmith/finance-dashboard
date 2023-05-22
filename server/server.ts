@@ -3,19 +3,28 @@ import dotenv from 'dotenv';
 dotenv.config();
 import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
+import cookieSession from 'cookie-session';
+import { db, ConnectDB } from './config';
 
 const app : Express = express();
 const port = process.env.PORT || 8000;
 
+ConnectDB();
+
 // init middleware
 app.use(bodyParser.json());
+app.use(cookieSession({
+  name: "login-token",
+  secret: process.env.COOKIE_SECRET,
+  httpOnly: true
+}));
+
 app.use('/api', apiRoute);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
 });
 
-//already within the signup/login process, user wants to connect their bank.
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
