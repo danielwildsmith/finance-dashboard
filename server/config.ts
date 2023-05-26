@@ -26,7 +26,8 @@ export const db = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
       ssl: {
           rejectUnauthorized: true,        
       }
-  }
+  },
+  logging: false
 });
 
 export const ConnectDB = async () => {
