@@ -4,8 +4,8 @@ dotenv.config();
 import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
-import { db, ConnectDB } from './config';
-import { SeedDB } from './seed';
+import { db, ConnectDB } from './utils/config';
+import { SeedDB } from './utils/seed';
 
 const app : Express = express();
 const port = process.env.SERVER_PORT || 8000;

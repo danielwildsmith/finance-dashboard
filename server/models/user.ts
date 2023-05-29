@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { db } from '../config';
+import { db } from '../utils/config';
 
 export const User = db.define("user", {
     username: {

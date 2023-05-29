@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
 import { LinkTokenCreateRequest } from 'plaid';
-import { plaidClient } from '../config';
+import { plaidClient } from '../utils/config';
 import { UserToken } from '../models/user-token';
 
 router.post('/create', async (request : Request, response : Response) => {

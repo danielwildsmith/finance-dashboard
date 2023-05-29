@@ -1,8 +1,8 @@
 // Database syncronization script hosted on Firebase to execute daily
 // Also, when a new access_key is created, the db should be filled with all its data accordingly - separate func that takes in access_key
-import { UserToken } from "./models/user-token";
-import { Transaction } from "./models/transaction";
-import { Balance } from "./models/balance";
+import { UserToken } from "../models/user-token";
+import { Transaction } from "../models/transaction";
+import { Balance } from "../models/balance";
 import axios from 'axios';
 import { format } from 'date-fns';
 

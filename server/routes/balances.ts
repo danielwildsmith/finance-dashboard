@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { plaidClient } from '../config';
+import { plaidClient } from '../utils/config';
 import { AccountsBalanceGetRequest } from 'plaid';
 import { Balance } from '../models/balance';
 

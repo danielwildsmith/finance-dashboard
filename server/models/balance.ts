@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { db } from '../config';
+import { db } from '../utils/config';
 
 export const Balance = db.define("balance", {
     balance_id: {
