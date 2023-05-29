@@ -18,7 +18,7 @@ export const SeedDB = async () => {
             access_token: user_tokens[i].dataValues.access_token
         }
         //@ts-ignore
-        axios.put('http://localhost:8000/api/transactions/all', req)
+        axios.post('http://localhost:8000/api/transactions/', req)
             .then(res => {
                 //@ts-ignore
                 res.data.forEach(transaction => { 
@@ -43,7 +43,7 @@ export const SeedDB = async () => {
                 console.error(error);
             });
 
-        axios.put('http://localhost:8000/api/balances/all', req)
+        axios.post('http://localhost:8000/api/balances/', req)
             .then(res => {
                 const currentDate = new Date();
                 const formattedDate : string = format(currentDate, 'yyyy-MM-dd');

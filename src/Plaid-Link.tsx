@@ -6,7 +6,7 @@ import { usePlaidLink } from 'react-plaid-link';
 const App = () => {
   const [linkToken, setLinkToken] = useState(null);
   const generateToken = async () => {
-    const response = await fetch('/api/plaid/create_link_token', {
+    const response = await fetch('/api/user-tokens/create', {
       method: 'POST',
     });
     const data = await response.json();
@@ -29,7 +29,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
     // @ts-ignore
   const onSuccess = React.useCallback((public_token, metadata) => {
     // send public_token to server
-    const response = fetch('/api/plaid/set_access_token', {
+    const response = fetch('/api/user-tokens/set', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import { LinkTokenCreateRequest } from 'plaid';
 import { plaidClient } from '../config';
 import { UserToken } from '../models/user-token';
 
-router.post('/create_link_token', async (request : Request, response : Response) => {
+router.post('/create', async (request : Request, response : Response) => {
   // Get the client_user_id by searching for the current user
   // const user = await User.find(...);
   // const clientUserId = user.id;
@@ -31,7 +31,7 @@ router.post('/create_link_token', async (request : Request, response : Response)
   }
 });
 
-router.post('/set_access_token', async (request : Request, response : Response, ) => {
+router.post('/set', async (request : Request, response : Response, ) => {
   // exchanges the public token provided from Link component for a permanent access token
   const publicToken = request.body.public_token;
   try {
