@@ -8,7 +8,7 @@ import { db, ConnectDB } from './config';
 import { SeedDB } from './seed';
 
 const app : Express = express();
-const port = process.env.PORT || 8000;
+const port = process.env.SERVER_PORT || 8000;
 
 ConnectDB();
 
