@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
-import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
 import { db, ConnectDB } from './utils/config';
 import { SeedDB } from './utils/seed';
 
@@ -15,18 +15,9 @@ ConnectDB();
 // init middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieSession({
-  name: "login-token",
-  secret: process.env.COOKIE_SECRET,
-  httpOnly: true
-}));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use('/api', apiRoute);
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
-});
-
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

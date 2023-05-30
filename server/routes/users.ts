@@ -44,12 +44,14 @@ router.post('/signin', async (req : Request, res : Response) => {
     }
 
     // assign cookie
+    res.cookie('username', req.body.username, { maxAge: undefined });
 
     res.status(200).send("User signed in successfully");
 });
 
 router.post('/logout', async (req : Request, res : Response) => {
     // delete cookie
+    res.cookie('username', req.body.username, { maxAge: 0 });
 
     res.status(200).send("User logged out successfully");
 });
