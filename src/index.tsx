@@ -1,20 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-// import App from './App';
-import PlaidLink from './Plaid-Link'
-import reportWebVitals from './reportWebVitals';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
+import { LoginForm } from './components/login';
+import App from './Plaid-Link';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement!);
+
 root.render(
-  <React.StrictMode>
-    <PlaidLink />
-  </React.StrictMode>
+  <>
+    <CssBaseline />
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/plaid" element={<App />} />
+      </Routes>
+    </Router> 
+  </>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+/*
+  COLOR PALETTE
+ 
+  dark background: #23272f
+  boxes: #343a46
+  blue highlight: #139eca
+  white text: #f6f7f9
+  grey text: #878fa0
+  text against box color: #707787 
+*/
