@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LoginForm } from './components/login';
+import { Dashboard } from './components/dashboard';
 import App from './Plaid-Link';
 
 const rootElement = document.getElementById('root');
@@ -15,10 +16,12 @@ root.render(
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/plaid" element={<App />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router> 
   </>
 );
+// <Route path="*" element={<NotFound />} />
 
 /*
   COLOR PALETTE
