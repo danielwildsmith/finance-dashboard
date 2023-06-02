@@ -26,25 +26,22 @@ router.post('/signup', async (req : Request, res : Response) => {
 
 router.post('/signin', async (req : Request, res : Response) => {
     if(!(req.body.username && req.body.password)) {
-        res.status(400).send( {error: "Missing username/password fields"} );
+        res.status(400).send( {error: "Missing username/password fields."} );
         return;
     }
     
     // check if user exists in db
     const user = await User.findByPk(req.body.username);
     if(user === null) {
-        res.status(404).send( { error: "User not found" } );
+        res.status(404).send( { error: "User not found." } );
         return;
     }
 
     // check if incorrect password
     if(user.getDataValue("password") !== req.body.password) {
-        res.status(401).send( { error: "Incorrect credentials" } );
+        res.status(401).send( { error: "Incorrect credentials." } );
         return;
     }
-
-    // assign cookie
-    res.cookie('username', req.body.username, { maxAge: undefined });
 
     res.status(200).send("User signed in successfully");
 });

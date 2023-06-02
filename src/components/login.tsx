@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,16 +11,36 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
     username: string,
     password: string
 }
 
-
+export const isLoggedIn = () => {
+    const cookies = document.cookie.split(';');
+    
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith('username' + '=')) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
 
 export const LoginForm = () => {
     const [status, setStatus] = useState('');
+    const [message, setMessage] = useState('');
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(isLoggedIn())
+            navigate('/dashboard');
+    }, []);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -30,21 +50,36 @@ export const LoginForm = () => {
             username: data.get('username') as string,
             password: data.get('password') as string
         }
+
+        const config = {
+            headers: {"Content-Type": "application/json"},
+            withCredentials: true
+        }
     
-        axios.post('http://localhost:8000/api/users/signin', req)
+        axios.post('http://localhost:8000/api/users/signin', req, config)
         .then(res => {
             setStatus('success');
+            setMessage('Success!');
+            document.cookie = 'username=' + req.username + '; path=/; SameSite=Lax';
+            navigate('/dashboard');
         })
         .catch(error => {
+            if (error.response)
+                setMessage(error.response.data.error);
+            else {
+                // Handle network or other errors
+                console.error(error);
+                setMessage('Internal server error.')
+            }
             setStatus('error');
         });
     };
 
     let alert;
     if(status === 'error')
-        alert = <Alert variant="filled" severity="error" sx={{ mt: 1 }}><strong>Error.</strong> Try again.</Alert>
+        alert = <Alert variant="filled" severity="error" sx={{ mt: 1 }}><strong>Error.</strong> {message}</Alert>
     else if(status === 'success')
-        alert = <Alert variant="filled" severity="success" sx={{ mt: 1 }}><strong>Success!</strong></Alert>
+        alert = <Alert variant="filled" severity="success" sx={{ mt: 1 }}><strong>{message}</strong></Alert>
     else
         alert = <></>;
 
