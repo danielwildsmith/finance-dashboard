@@ -30,7 +30,7 @@ export const SeedDB = async () => {
                                     {
                                         date: transaction.date,
                                         name: transaction.merchant_name,
-                                        category: JSON.stringify(transaction.category),
+                                        category: JSON.stringify(transaction.personal_finance_category.primary),
                                         amount: transaction.amount,
                                         username: user_tokens[i].dataValues.username
                                     }
