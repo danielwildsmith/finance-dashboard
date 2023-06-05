@@ -31,6 +31,13 @@ export const isLoggedIn = () => {
     return false;
   }
 
+  export const GetUsername = (): string => {
+    const cookieString = document.cookie;
+    const match = cookieString.match(/username=([^;]+)/);
+
+    return match ? match[1] : '';
+  };
+
 export const LoginForm = () => {
     const [status, setStatus] = useState('');
     const [message, setMessage] = useState('');
@@ -40,7 +47,7 @@ export const LoginForm = () => {
     useEffect(() => {
         if(isLoggedIn())
             navigate('/dashboard');
-    }, []);
+    });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
