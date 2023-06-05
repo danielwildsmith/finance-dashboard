@@ -43,6 +43,50 @@ router.get('/:username', async function (req : Request, res : Response) {
   res.status(200).send(transactions);
 });
 
+// For category: amount chart
+router.get('/category/:username/:yyyy/:mm', async function (req : Request, res : Response) {
+  const username : string = req.params.username;
+  const year : string = req.params.yyyy;
+  const month : string = req.params.mm;
+
+  // find all transaction records associated with this username in this month on this year
+  const transactions = await Transaction.findAll({
+    where: {
+      username: username,
+      date: {
+        [Op.gte]: `${year}-${month}-01`,
+        [Op.lte]: `${year}-${month}-31`
+      }
+    }
+  });
+
+  if(transactions.length === 0) {
+    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
+    return;
+  }
+
+  let category_amounts_map: { [category: string]: number } = {};
+  transactions.forEach(transaction => {
+    if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
+      let category : string = JSON.parse(transaction.dataValues.category)[0];
+      if(category_amounts_map[category]) {
+        category_amounts_map[category] = category_amounts_map[category] + transaction.dataValues.amount;
+      }
+      else {
+        category_amounts_map[category] = transaction.dataValues.amount;
+      }
+    }
+  });
+
+  let formatted_category_amounts : { name: string; value: number; }[] = [];
+  for(const [key, value] of Object.entries(category_amounts_map)) {
+    formatted_category_amounts.push({ name: key, value: value })
+  };  
+
+  res.status(200).send(formatted_category_amounts);
+});
+
+
 router.get('/:username/:yyyy/:mm', async function (req : Request, res : Response) {
   const username : string = req.params.username;
   const year : string = req.params.yyyy;
