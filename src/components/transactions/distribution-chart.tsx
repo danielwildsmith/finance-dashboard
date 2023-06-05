@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { GetUsername } from '../login';
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+import { CategoryData } from './transactions';
 
 const RADIAN = Math.PI / 180;
 //@ts-ignore
@@ -19,47 +18,28 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-//@ts-ignore
-export const ExampleChart = ({ month, year }) => {
-    const [data, setData] = useState<{ name: string; value: number; }[] | null>(null);
-
-    const GetData = async () => {
-        let formattedMonth = month.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-        axios.get(`http://localhost:8000/api/transactions/category/${GetUsername()}/${year}/${formattedMonth}`)
-        .then(res => {
-            setData(res.data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-        
-    // On mount, load in current month's breakdown of category: amount 
-    useEffect(() => {
-        GetData();
-    }, []);
-
-    if(data) {
-        return (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart width={400} height={400}>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          );
-    }
-    return <></>;
+export const ExampleChart = ({ month, year, data, colors }: {month: number, year: number, data: CategoryData[] | null, colors: string[]}) => {
+  if(data) {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart width={400} height={400}>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            label={renderCustomizedLabel}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+    );
+  }
+  return <></>;
 };
