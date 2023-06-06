@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isLoggedIn } from "../login";
-import { ExampleChart } from "../transactions/distribution-chart";
 import { Grid } from "@mui/material";
 
 export const Dashboard = () => {

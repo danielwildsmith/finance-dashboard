@@ -1,10 +1,9 @@
 import React from 'react';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MonthlyCategoryData } from './transactions';
+import { COLORS_MAP, CategoryData } from './transactions';
 import chroma from 'chroma-js';
 
-export const SpendingsGraph = ( { data, colors }: {data: MonthlyCategoryData[] | null, colors: string[]} ) => {
-  console.log(data);
+export const CategorySpendingsGraph = ( { data }: {data: CategoryData[] | null} ) => {
   if(data) {
     return (
       <ResponsiveContainer width="100%" height="100%">
@@ -23,18 +22,17 @@ export const SpendingsGraph = ( { data, colors }: {data: MonthlyCategoryData[] |
           <XAxis dataKey="category" />
           <YAxis />
           <Tooltip />
-          <Legend />
-          <Bar dataKey='selected_month_amount'>
+          <Bar dataKey='amount'>
             {
               data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index]} />
+                <Cell key={`cell-${index}`} fill={COLORS_MAP[entry.category]} />
               ))
             }
           </Bar>
           <Bar dataKey='previous_month_amount'>
             {
               data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={chroma(colors[index]).brighten(0.95).hex()} />
+                <Cell key={`cell-${index}`} fill={chroma(COLORS_MAP[entry.category]).brighten(0.95).hex()} />
               ))
             }
           </Bar>

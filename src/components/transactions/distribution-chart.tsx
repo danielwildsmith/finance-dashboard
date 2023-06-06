@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import { GetUsername } from '../login';
-import { CategoryData } from './transactions';
+import { COLORS_MAP, CategoryData } from './transactions';
 
 const RADIAN = Math.PI / 180;
 //@ts-ignore
@@ -18,7 +18,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-export const ExampleChart = ({ month, year, data, colors }: {month: number, year: number, data: CategoryData[] | null, colors: string[]}) => {
+export const CategoryDistributionChart = ({ data }: { data: CategoryData[] | null }) => {
   if(data) {
     return (
       <ResponsiveContainer width="100%" height="100%">
@@ -31,10 +31,10 @@ export const ExampleChart = ({ month, year, data, colors }: {month: number, year
             label={renderCustomizedLabel}
             outerRadius={80}
             fill="#8884d8"
-            dataKey="value"
+            dataKey="amount"
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              <Cell key={`cell-${index}`} fill={COLORS_MAP[entry.category]} />
             ))}
           </Pie>
         </PieChart>
