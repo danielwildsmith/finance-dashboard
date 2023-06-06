@@ -4,7 +4,7 @@ import { TransactionsGetRequest } from 'plaid';
 import { format } from 'date-fns';
 import { Transaction } from '../models/transaction';
 import { Op, Model } from 'sequelize';
-import { MonthlyCategoryData } from '../../src/components/transactions/transactions';
+import { CATEGORIES, CategoryData, MonthlyTotalData } from '../../src/components/transactions/transactions';
 
 const router = express.Router();
 
@@ -45,15 +45,15 @@ router.get('/:username', async function (req : Request, res : Response) {
   res.status(200).send(transactions);
 });
 
-// For category: amount chart
+// for month to month comparisons with category breakdown
 router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, res : Response) {
   const username : string = req.params.username;
-  const year : string = req.params.yyyy;
+  let year : string = req.params.yyyy;
   const month : string = req.params.mm;
   let days_in_month = new Date(parseInt(year), parseInt(month), 0).getDate();
 
   // find all transaction records associated with this username in this month on this year
-  const transactions = await Transaction.findAll({
+  const selected_month_transactions = await Transaction.findAll({
     where: {
       username: username,
       date: {
@@ -63,34 +63,77 @@ router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, re
     }
   });
 
-  if(transactions.length === 0) {
-    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
-    return;
+  // find all transaction records associated with this username in the previous month
+  let previous_month = parseInt(month) - 1;
+  // edge case: January (00, -01 => 12, 11)
+  if(previous_month === 0) {
+    previous_month = 12;
+    year = (parseInt(year) - 1).toString();
   }
+  const formatted_previous_month = previous_month.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+  days_in_month = new Date(parseInt(year), previous_month, 0).getDate();
 
-  let category_amounts_map: { [category: string]: number } = {};
-  transactions.forEach(transaction => {
-    if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
-      let category : string = JSON.parse(transaction.dataValues.category)[0];
-      if(category_amounts_map[category]) {
-        category_amounts_map[category] = category_amounts_map[category] + transaction.dataValues.amount;
-      }
-      else {
-        category_amounts_map[category] = transaction.dataValues.amount;
+  const previous_month_transactions = await Transaction.findAll({
+    where: {
+      username: username,
+      date: {
+        [Op.gte]: `${year}-${formatted_previous_month}-01`,
+        [Op.lte]: `${year}-${formatted_previous_month}-${days_in_month}`
       }
     }
   });
 
-  let formatted_category_amounts : { name: string; value: number; }[] = [];
-  for(const [key, value] of Object.entries(category_amounts_map)) {
-    formatted_category_amounts.push({ name: key, value: value })
-  };  
 
-  res.status(200).send(formatted_category_amounts);
+  if(selected_month_transactions.length === 0 && previous_month_transactions.length === 0) {
+    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
+    return;
+  }
+
+  const getByCategoryData = (month_transactions : Model<any, any>[]): { [category: string]: number } => {
+    let category_amounts_map: { [category: string]: number } = {};
+    month_transactions.forEach(transaction => {
+      if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
+        let category : string = JSON.parse(transaction.dataValues.category);
+        if(!CATEGORIES.includes(category))
+          category = 'OTHER';
+        if(category_amounts_map[category]) {
+          category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
+        }
+        else {
+          category_amounts_map[category] = Number(transaction.dataValues.amount.toFixed(2));
+        }
+      }
+    });
+    return category_amounts_map;
+  };
+
+  console.log(getByCategoryData(selected_month_transactions));
+
+  // move data into objects for front-end
+  let category_data : CategoryData[] = [];
+  for(const [key, value] of Object.entries(getByCategoryData(selected_month_transactions))) {
+    category_data.push({
+      category: key, month: month, amount: value, previous_month: formatted_previous_month, previous_month_amount: 0
+    });
+  };
+  for(const [key, value] of Object.entries(getByCategoryData(previous_month_transactions))) {
+    let index = category_data.findIndex((obj => obj.category === key));
+    // category does not exist already
+    if(index === -1) {
+      category_data.push({
+        category: key, month: month, amount: 0, previous_month: formatted_previous_month, previous_month_amount: value
+      });
+    } 
+    else {
+      category_data[index].previous_month_amount = value;
+    }
+  };
+
+  res.status(200).send(category_data);
 });
 
-// for month to month comparisons with category breakdown
-router.get('/monthly/:username/:yyyy/:mm', async function (req : Request, res : Response) {
+// for monthly totals chart
+router.get('/totals/:username/:yyyy/:mm', async function (req : Request, res : Response) {
   const username : string = req.params.username;
   let year : string = req.params.yyyy;
   const month : string = req.params.mm;
@@ -157,53 +200,33 @@ router.get('/monthly/:username/:yyyy/:mm', async function (req : Request, res : 
     month_transactions.forEach(transaction => {
       if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
         let category : string = JSON.parse(transaction.dataValues.category);
+        if(!CATEGORIES.includes(category))
+          category = 'OTHER';
         if(category_amounts_map[category]) {
-          category_amounts_map[category] = category_amounts_map[category] + transaction.dataValues.amount;
+          category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
         }
         else {
-          category_amounts_map[category] = transaction.dataValues.amount;
+          category_amounts_map[category] = Number(transaction.dataValues.amount.toFixed(2));
         }
       }
     });
     return category_amounts_map;
   };
 
-  // move data into objects for front-end
-  let monthly_category_data : MonthlyCategoryData[] = [];
-  for(const [key, value] of Object.entries(getByCategoryData(selected_month_transactions))) {
-    monthly_category_data.push({
-      category: key, selected_month: month, selected_month_amount: value, previous_month: formatted_previous_month, previous_month_amount: 0, 
-      penultimate_month: formatted_penultimate_month, penultimate_month_amount: 0
-    });
-  };
-  for(const [key, value] of Object.entries(getByCategoryData(previous_month_transactions))) {
-    let index = monthly_category_data.findIndex((obj => obj.category === key));
-    // category does not exist already
-    if(index === -1) {
-      monthly_category_data.push({
-        category: key, selected_month: month, selected_month_amount: 0, previous_month: formatted_previous_month, previous_month_amount: value, 
-        penultimate_month: formatted_penultimate_month, penultimate_month_amount: 0
-      });
-    } 
-    else {
-      monthly_category_data[index].previous_month_amount = value;
-    }
-  };
-  for(const [key, value] of Object.entries(getByCategoryData(penultimate_month_transactions))) {
-    let index = monthly_category_data.findIndex((obj => obj.category === key));
-    // category does not exist already
-    if(index === -1) {
-      monthly_category_data.push({
-        category: key, selected_month: month, selected_month_amount: 0, previous_month: formatted_previous_month, previous_month_amount: 0, 
-        penultimate_month: formatted_penultimate_month, penultimate_month_amount: value
-      });
-    } 
-    else {
-      monthly_category_data[index].penultimate_month_amount = value;
-    }
-  };
-
-  res.status(200).send(monthly_category_data);
+  const getTemplateData = (month : string) : MonthlyTotalData => {
+    return { 
+      month: month, FOOD_AND_DRINK: 0, GENERAL_MERCHANDISE: 0, TRANSPORTATION: 0, RENT_AND_UTILITIES: 0, 
+      TRAVEL: 0, TRANSFER_OUT: 0, GENERAL_SERVICES: 0, OTHER: 0 
+    };
+  }
+  
+  const finalData = [
+    { ...getTemplateData(month), ...getByCategoryData(selected_month_transactions)},
+    { ...getTemplateData(previous_month.toString()), ...getByCategoryData(previous_month_transactions)},
+    { ...getTemplateData(penultimate_month.toString()), ...getByCategoryData(penultimate_month_transactions)}
+  ]
+  
+  res.status(200).send(finalData);
 });
 
 
