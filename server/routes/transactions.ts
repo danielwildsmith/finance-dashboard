@@ -4,10 +4,11 @@ import { TransactionsGetRequest } from 'plaid';
 import { format } from 'date-fns';
 import { Transaction } from '../models/transaction';
 import { Op, Model } from 'sequelize';
-import { CATEGORIES, CategoryData, MonthlyTotalData } from '../../src/components/transactions/transactions';
+import { CATEGORIES, CategoryData, MonthlyTotalData, TransactionRow } from '../../src/components/transactions/transactions';
 
 const router = express.Router();
 
+// for seeding the db
 router.post('/', async function (req : Request, res : Response) {
   const currentDate = new Date();
   const formattedDate : string = format(currentDate, 'yyyy-MM-dd');
@@ -25,24 +26,6 @@ router.post('/', async function (req : Request, res : Response) {
   } catch (error) {
     console.log(error);
   }
-});
-
-router.get('/:username', async function (req : Request, res : Response) {
-  const username : string = req.params.username;
-
-  // find all balance records associated with this username
-  const transactions = await Transaction.findAll({
-    where: {
-      username: username
-    }
-  });
-
-  if(transactions.length === 0) {
-    res.status(404).send( {error: "No transaction records associated with this username"} );
-    return;
-  }
-
-  res.status(200).send(transactions);
 });
 
 // for month to month comparisons with category breakdown
@@ -94,8 +77,9 @@ router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, re
     month_transactions.forEach(transaction => {
       if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
         let category : string = JSON.parse(transaction.dataValues.category);
+        category = category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
         if(!CATEGORIES.includes(category))
-          category = 'OTHER';
+          category = 'Other';
         if(category_amounts_map[category]) {
           category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
         }
@@ -106,8 +90,6 @@ router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, re
     });
     return category_amounts_map;
   };
-
-  console.log(getByCategoryData(selected_month_transactions));
 
   // move data into objects for front-end
   let category_data : CategoryData[] = [];
@@ -200,8 +182,9 @@ router.get('/totals/:username/:yyyy/:mm', async function (req : Request, res : R
     month_transactions.forEach(transaction => {
       if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
         let category : string = JSON.parse(transaction.dataValues.category);
+        category = category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
         if(!CATEGORIES.includes(category))
-          category = 'OTHER';
+          category = 'Other';
         if(category_amounts_map[category]) {
           category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
         }
@@ -229,7 +212,7 @@ router.get('/totals/:username/:yyyy/:mm', async function (req : Request, res : R
   res.status(200).send(finalData);
 });
 
-
+// for the transactions table
 router.get('/:username/:yyyy/:mm', async function (req : Request, res : Response) {
   const username : string = req.params.username;
   const year : string = req.params.yyyy;
@@ -252,9 +235,31 @@ router.get('/:username/:yyyy/:mm', async function (req : Request, res : Response
     return;
   }
 
-  res.status(200).send(transactions);
+  const transaction_rows : TransactionRow[] = []
+  transactions.forEach((transaction) => {
+    if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
+      let category : string = JSON.parse(transaction.dataValues.category);
+      category = category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+      if(!CATEGORIES.includes(category))
+        category = 'OTHER';
+      transaction_rows.push( 
+        {
+          id: transaction.dataValues.transaction_id,
+          date: transaction.dataValues.date,
+          name: transaction.dataValues.name,
+          category: category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
+          amount: `$${transaction.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          note: transaction.dataValues.note,
+          verified: transaction.dataValues.verified
+        }
+      )
+    }
+  })
+
+  res.status(200).send(transaction_rows);
 });
 
+// for updating the transactions table 'note' field
 router.put('/note/:id', async function (req : Request, res : Response) {
   let transaction = await Transaction.findByPk(req.params.id);
 
@@ -277,9 +282,19 @@ router.put('/note/:id', async function (req : Request, res : Response) {
   
   transaction = await Transaction.findByPk(req.params.id);
 
-  res.status(200).send(transaction);
+  let transaction_row : TransactionRow = {
+    id: transaction?.dataValues.transaction_id,
+    date: transaction?.dataValues.date,
+    name: transaction?.dataValues.name,
+    category: req.body.category,
+    amount: `$${transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+    note: transaction?.dataValues.note,
+    verified: transaction?.dataValues.verified
+  }
+  res.status(200).send(transaction_row);
 });
 
+// for updating the transactions table 'verified' field
 router.put('/verify/:id', async function (req : Request, res : Response) {
   let transaction = await Transaction.findByPk(req.params.id);
 
@@ -302,7 +317,16 @@ router.put('/verify/:id', async function (req : Request, res : Response) {
   
   transaction = await Transaction.findByPk(req.params.id);
 
-  res.status(200).send(transaction);
+  let transaction_row : TransactionRow = {
+    id: transaction?.dataValues.transaction_id,
+    date: transaction?.dataValues.date,
+    name: transaction?.dataValues.name,
+    category: req.body.category,
+    amount: `$${transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+    note: transaction?.dataValues.note,
+    verified: transaction?.dataValues.verified
+  }
+  res.status(200).send(transaction_row);
 });
 
 export default router;
