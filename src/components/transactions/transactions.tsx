@@ -7,6 +7,7 @@ import { CategorySpendingsGraph } from "./spendings-graph";
 import axios from 'axios';
 import { GetUsername } from '../login';
 import { MonthlyTotalGraph } from "./monthly-total-graph";
+import { BasicEditingGrid } from "./table";
 
 export interface CategoryData {
     category: string,
@@ -28,18 +29,29 @@ export interface MonthlyTotalData {
     OTHER: number
 }
 
+export interface TransactionRow {
+    id: string,
+    date: string,
+    name: string,
+    category: string,
+    amount: string,
+    note: string,
+    verified: boolean
+}
+
 export const CATEGORIES = [
-    'FOOD_AND_DRINK', 'GENERAL_MERCHANDISE', 'TRANSPORTATION', 'RENT_AND_UTILITIES', 'TRAVEL', 'TRANSFER_OUT', 'GENERAL_SERVICES', 'OTHER'
+    'Food And Drink', 'General Merchandise', 'Transportation', 'Rent And Utilities', 'Travel', 'Transfer Out', 'General Services', 'Other'
 ];
+
 export const COLORS_MAP : { [key: string]: string } = {
-    FOOD_AND_DRINK: '#0088FE',
-    GENERAL_MERCHANDISE: '#00C49F',
-    TRANSPORTATION: '#FFBB28',
-    RENT_AND_UTILITIES: '#227878',
-    TRAVEL: '#FF8042',
-    TRANSFER_OUT: '#9C27B0',
-    GENERAL_SERVICES: '#E5005E',
-    OTHER: '#555555'
+    'Food And Drink': '#0088FE',
+    'General Merchandise': '#00C49F',
+    'Transportation': '#FFBB28',
+    'Rent And Utilities': '#227878',
+    'Travel': '#FF8042',
+    'Transfer Out': '#9C27B0',
+    'General Services': '#E5005E',
+    'Other': '#555555'
 };
 
 export const Transactions = () => {
@@ -48,11 +60,12 @@ export const Transactions = () => {
     const [year, setYear] = useState(date.getFullYear());
     const [categoryData, setCategoryData] = useState<CategoryData[] | null>(null);
     const [monthlyTotalsData, setMonthlyTotalsData] = useState<MonthlyTotalData[] | null>(null);
+    const [transactionRows, setTransactionRows] = useState<TransactionRow[] | null>(null);
 
     const navigate = useNavigate();
+    let formattedMonth = month.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
 
     const getCategoryData = () => {
-        let formattedMonth = month.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
         axios.get(`http://localhost:8000/api/transactions/categorized/${GetUsername()}/${year}/${formattedMonth}`)
         .then(res => {
             setCategoryData(res.data);
@@ -63,10 +76,19 @@ export const Transactions = () => {
     };
 
     const getMonthlyTotalsData = () => {
-        let formattedMonth = month.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
         axios.get(`http://localhost:8000/api/transactions/totals/${GetUsername()}/${year}/${formattedMonth}`)
         .then(res => {
             setMonthlyTotalsData(res.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
+    const getTransactionRows = () => {
+        axios.get(`http://localhost:8000/api/transactions/${GetUsername()}/${year}/${formattedMonth}`)
+        .then(res => {
+            setTransactionRows(res.data);
         })
         .catch(error => {
             console.error(error);
@@ -80,6 +102,7 @@ export const Transactions = () => {
 
             getCategoryData();
             getMonthlyTotalsData();
+            getTransactionRows();
     }, []);
 
     return (
@@ -96,6 +119,7 @@ export const Transactions = () => {
                     <MonthlyTotalGraph data={monthlyTotalsData} />
                 </Grid>
             </Grid>
+            <BasicEditingGrid data={transactionRows} />
         </>
     )
 };

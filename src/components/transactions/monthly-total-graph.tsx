@@ -4,7 +4,6 @@ import { CATEGORIES, COLORS_MAP, MonthlyTotalData } from './transactions';
 
 export const MonthlyTotalGraph = ( { data }: {data: MonthlyTotalData[] | null }) => {
     if(data) {
-        console.log(data);
         return (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
