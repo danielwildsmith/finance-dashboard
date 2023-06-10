@@ -68,7 +68,7 @@ router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, re
 
 
   if(selected_month_transactions.length === 0 && previous_month_transactions.length === 0) {
-    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
+    res.status(200).send([]);
     return;
   }
 
@@ -173,7 +173,10 @@ router.get('/totals/:username/:yyyy/:mm', async function (req : Request, res : R
   });
 
   if(selected_month_transactions.length === 0 && previous_month_transactions.length === 0 && penultimate_month_transactions.length === 0) {
-    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
+    res.status(200).send([{ 
+      month: month, FOOD_AND_DRINK: 0, GENERAL_MERCHANDISE: 0, TRANSPORTATION: 0, RENT_AND_UTILITIES: 0, 
+      TRAVEL: 0, TRANSFER_OUT: 0, GENERAL_SERVICES: 0, OTHER: 0 
+    }]);
     return;
   }
 
@@ -230,11 +233,6 @@ router.get('/:username/:yyyy/:mm', async function (req : Request, res : Response
     }
   });
 
-  if(transactions.length === 0) {
-    res.status(404).send( {error: "No transaction records associated with this username in this time period"} );
-    return;
-  }
-
   const transaction_rows : TransactionRow[] = []
   transactions.forEach((transaction) => {
     if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
@@ -248,7 +246,7 @@ router.get('/:username/:yyyy/:mm', async function (req : Request, res : Response
           date: transaction.dataValues.date,
           name: transaction.dataValues.name,
           category: category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
-          amount: `$${transaction.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          amount: transaction.dataValues.amount.toFixed(2),
           note: transaction.dataValues.note,
           verified: transaction.dataValues.verified
         }
@@ -287,7 +285,7 @@ router.put('/note/:id', async function (req : Request, res : Response) {
     date: transaction?.dataValues.date,
     name: transaction?.dataValues.name,
     category: req.body.category,
-    amount: `$${transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+    amount: Number(transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })),
     note: transaction?.dataValues.note,
     verified: transaction?.dataValues.verified
   }
@@ -322,7 +320,7 @@ router.put('/verify/:id', async function (req : Request, res : Response) {
     date: transaction?.dataValues.date,
     name: transaction?.dataValues.name,
     category: req.body.category,
-    amount: `$${transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+    amount: Number(transaction?.dataValues.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })),
     note: transaction?.dataValues.note,
     verified: transaction?.dataValues.verified
   }
