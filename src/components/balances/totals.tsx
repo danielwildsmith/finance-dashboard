@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from 'recharts';
 import { TypedBalance } from './balances';
-
-const data = [
-    { type: 'savings', total: 400 },
-    { type: 'checking', total: 300 }
-];
+import { Grid, Typography } from '@mui/material';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#227878', '#9C27B0', '#E5005E', '#555555'];
 
@@ -60,28 +56,46 @@ export const Totals = ({ data }: { data: TypedBalance[] | null }) => {
   const onPieEnter = (_ : null, index : number) => {
     setIndex(index);
   };
+
+  const getCurrentNetWorth = (): number => {
+    let total = 0;
+    data?.forEach(balance => {
+        total += balance.total;
+    });
+
+    return total;
+  };
+
+
   if(data) {
     return (
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart width={400} height={400}>
-            <Pie
-              activeIndex={index}
-              activeShape={renderActiveShape}
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              dataKey="total"
-              onMouseEnter={onPieEnter}
-            >
-              {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-      );
+        <Grid container spacing={0}>
+            <Grid item xs={12} sm={6} lg={6} height={'50vh'}>
+                    <Typography variant="body1"> Net Worth: {getCurrentNetWorth()} </Typography>
+                </Grid>
+            <Grid item xs={12} sm={6} lg={6} height={'50vh'}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart width={400} height={400}>
+                        <Pie
+                            activeIndex={index}
+                            activeShape={renderActiveShape}
+                            data={data}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            dataKey="total"
+                            onMouseEnter={onPieEnter}
+                            >
+                            {data.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+            </Grid>
+        </Grid>
+    );
   }
   return <></>;
 }
