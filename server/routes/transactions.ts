@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { Transaction } from '../models/transaction';
 import { Op, Model } from 'sequelize';
 import { CATEGORIES, CategoryData, MonthlyTotalData, TransactionRow } from '../../src/components/transactions/transactions';
+import { MonthlyAmountComparison } from '../../src/components/dashboard/cards';
 
 const router = express.Router();
 
@@ -326,5 +327,56 @@ router.put('/verify/:id', async function (req : Request, res : Response) {
   }
   res.status(200).send(transaction_row);
 });
+
+router.get('/comparison/:username', async function (req : Request, res : Response) {
+  const username : string = req.params.username;
+  let date = new Date();
+  let formattedEndDate = format(date, 'yyyy-MM-dd');
+  date.setDate(date.getDate() - 30);
+  let formattedStartDate = format(date, 'yyyy-MM-dd');
+
+  let recentAmount = 0;
+  let previousAmount = 0;
+
+  // get total of balances on current date
+  const recentTransactions = await Transaction.findAll({
+    where: {
+      username: username,
+      date: {
+        [Op.lte]: formattedEndDate,
+        [Op.gte]: formattedStartDate
+      },
+      amount: {[Op.gt]: 0}
+    },
+  })
+
+  recentTransactions.forEach(transaction =>
+    recentAmount += transaction.dataValues.amount
+  )
+
+  formattedEndDate = formattedStartDate;
+  date.setDate(date.getDate() - 30);
+  formattedStartDate = format(date, 'yyyy-MM-dd');
+
+  const previousTransactions = await Transaction.findAll({
+    where: {
+      username: username,
+      date: {
+        [Op.lte]: formattedEndDate,
+        [Op.gte]: formattedStartDate
+      },
+      amount: {[Op.gt]: 0}
+    },
+  })
+
+  previousTransactions.forEach(transaction =>
+    previousAmount += transaction.dataValues.amount
+  )
+
+  // comparison can only really be made after 30 days has passed
+  const available = previousAmount === 0 || recentAmount === 0 ? false : true;
+  const comparisonData : MonthlyAmountComparison = { recentAmount: recentAmount, previousAmount: previousAmount, available: available };
+  res.status(200).send(comparisonData);
+})
 
 export default router;

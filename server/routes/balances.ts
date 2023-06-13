@@ -4,6 +4,8 @@ import { AccountsBalanceGetRequest } from 'plaid';
 import { Balance } from '../models/balance';
 import { format } from 'date-fns';
 import { DatedNetWorth, TypedBalance } from '../../src/components/balances/balances';
+import { Op } from 'sequelize';
+import { MonthlyAmountComparison } from '../../src/components/dashboard/cards';
 
 const router = express.Router();
 
@@ -87,5 +89,46 @@ router.get('/history/:username', async function (req : Request, res : Response) 
 
   res.status(200).send(datedNetWorths.reverse());
 })
+
+// for dashboard balance card - data on last 30 days vs previous 30 days
+router.get('/comparison/:username', async function (req : Request, res : Response) {
+  const username : string = req.params.username;
+  let date = new Date();
+  let formattedDate = format(date, 'yyyy-MM-dd');
+
+  let recentAmount = 0;
+  let previousAmount = 0;
+
+  // get total of balances on current date
+  const recentBalances = await Balance.findAll({
+    where: {
+      username: username,
+      date: formattedDate
+    },
+  })
+
+  recentBalances.forEach(balance =>
+    recentAmount += balance.dataValues.amount
+  )
+
+  date.setDate(date.getDate() - 30);
+  formattedDate = format(date, 'yyyy-MM-dd');
+
+  const previousBalances = await Balance.findAll({
+    where: {
+      username: username,
+      date: formattedDate
+    },
+  })
+
+  previousBalances.forEach(balance =>
+    previousAmount += balance.dataValues.amount
+  )
+
+  // comparison can only really be made after 30 days has passed
+  const available = previousAmount === 0 ? false : true;
+  const comparisonData : MonthlyAmountComparison = { recentAmount: recentAmount, previousAmount: previousAmount, available: available };
+  res.status(200).send(comparisonData);
+});
 
 export default router;
