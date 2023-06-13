@@ -3,7 +3,7 @@ import { plaidClient } from '../utils/config';
 import { AccountsBalanceGetRequest } from 'plaid';
 import { Balance } from '../models/balance';
 import { format } from 'date-fns';
-import { TypedBalance } from '../../src/components/balances/balances';
+import { DatedNetWorth, TypedBalance } from '../../src/components/balances/balances';
 
 const router = express.Router();
 
@@ -56,5 +56,36 @@ router.get('/current/:username', async function (req : Request, res : Response) 
 
   res.status(200).send(currentBalances);
 });
+
+// for net worth over time graph
+router.get('/history/:username', async function (req : Request, res : Response) {
+  const username : string = req.params.username;
+  let currentDate = new Date();
+  let datedNetWorths : DatedNetWorth[] = [];
+
+  // maximum 13 data points should be returned
+  for(let i = 0; i < 13; i++) {
+    let dbDate = format(currentDate, 'yyyy-MM-dd');
+    const balances = await Balance.findAll({
+      where: {
+        username: username,
+        date: dbDate,
+      },
+    })
+
+    if(balances.length === 0)
+      break;
+
+    let netWorth = 0;
+    balances.forEach(balance => {
+      netWorth += balance.dataValues.amount
+    })
+
+    datedNetWorths.push({ date: format(currentDate, 'MM-dd-yyyy'), total: netWorth });
+    currentDate.setDate(currentDate.getDate() - 7);
+  }
+
+  res.status(200).send(datedNetWorths.reverse());
+})
 
 export default router;
