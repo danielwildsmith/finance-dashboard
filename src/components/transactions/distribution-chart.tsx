@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
-import { GetUsername } from '../login';
 import { COLORS_MAP, CategoryData } from './transactions';
 
 const RADIAN = Math.PI / 180;

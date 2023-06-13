@@ -6,6 +6,7 @@ import { LoginForm } from './components/login';
 import { Dashboard } from './components/dashboard/dashboard';
 import App from './components/dashboard/Plaid-Link';
 import { Transactions } from './components/transactions/transactions';
+import { Balances } from './components/balances/balances';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement!);
@@ -19,6 +20,7 @@ root.render(
         <Route path="/plaid" element={<App />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/transactions" element={<Transactions />} />
+        <Route path="/balances" element={<Balances />} />
       </Routes>
     </Router> 
   </>
