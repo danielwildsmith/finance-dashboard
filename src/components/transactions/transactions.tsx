@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import { PageLayout } from "../../page-layout";
 
 export interface CategoryData {
     category: string,
@@ -79,7 +80,7 @@ export const Transactions = () => {
     };
 
     const startYear = date.getFullYear() - 10
-    const yearOptions = [];
+    const yearOptions : string[] = [];
     for (let i = date.getFullYear(); i >= startYear; i--)
         yearOptions.push(i.toString());
     const monthOptions = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
@@ -128,52 +129,56 @@ export const Transactions = () => {
             fetchData();
     }, [year, month]);
 
-    return (
-        <>
-            <Box sx={{ width: 220 }}>
-                <FormControl fullWidth>
-                    <InputLabel>Year</InputLabel>
-                    <Select
-                        value={year}
-                        label="Year"
-                        onChange={handleYearChange}
-                        >
-                        {yearOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box>
-            <Box sx={{ width: 220 }}>
-                <FormControl fullWidth>
-                    <InputLabel>Month</InputLabel>
-                    <Select
-                        value={monthOptions[parseInt(month) - 1]}
-                        label="Month"
-                        onChange={handleMonthChange}
-                        >
-                        {monthOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box>
-            <Grid container spacing={0}>
-                <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
-                    <CategoryDistributionChart data={categoryData} />
+    const Content = () => {
+        return (
+            <>
+                <Box sx={{ width: 220 }}>
+                    <FormControl fullWidth>
+                        <InputLabel>Year</InputLabel>
+                        <Select
+                            value={year}
+                            label="Year"
+                            onChange={handleYearChange}
+                            >
+                            {yearOptions.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box sx={{ width: 220 }}>
+                    <FormControl fullWidth>
+                        <InputLabel>Month</InputLabel>
+                        <Select
+                            value={monthOptions[parseInt(month) - 1]}
+                            label="Month"
+                            onChange={handleMonthChange}
+                            >
+                            {monthOptions.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Grid container spacing={0}>
+                    <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
+                        <CategoryDistributionChart data={categoryData} />
+                    </Grid>
+                    <Grid item xs={12} sm={6} lg={5} height={'50vh'}>
+                        <CategorySpendingsGraph data={categoryData} />
+                    </Grid>
+                    <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
+                        <MonthlyTotalGraph data={monthlyTotalsData} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6} lg={5} height={'50vh'}>
-                    <CategorySpendingsGraph data={categoryData} />
-                </Grid>
-                <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
-                    <MonthlyTotalGraph data={monthlyTotalsData} />
-                </Grid>
-            </Grid>
-            <BasicEditingGrid data={transactionRows} />
-        </>
-    )
+                <BasicEditingGrid data={transactionRows} />
+            </>
+        )
+    }
+
+    return <PageLayout page={'Transactions'} isLinked={true} ContentComponent={Content} />
 };

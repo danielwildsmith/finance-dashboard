@@ -5,6 +5,7 @@ import axios from "axios";
 import { GetUsername, isLoggedIn } from "../login";
 import { useNavigate } from "react-router-dom";
 import { NetWorthTimeGraph } from "./time-graph";
+import { PageLayout } from "../../page-layout";
 
 export interface TypedBalance {
     type: string,
@@ -54,12 +55,16 @@ export const Balances = () => {
             fetchData();
     }, []);
 
-    return (
-        <>
-            <Totals data={currentBalances} />
-            <Box sx={{height: '45vh', marginLeft: '3vw', marginRight: '3vw'}}>
-                <NetWorthTimeGraph data={recentNetWorthData} />
-            </Box>
-        </>
-    )
+    const Content = () => {
+        return (
+            <>
+                <Totals data={currentBalances} />
+                <Box sx={{height: '45vh', marginLeft: '3vw', marginRight: '3vw'}}>
+                    <NetWorthTimeGraph data={recentNetWorthData} />
+                </Box>
+            </>
+        )
+    }
+    
+    return <PageLayout page={'Balances'} isLinked={true} ContentComponent={Content} />
 }

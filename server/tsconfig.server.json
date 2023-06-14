@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "exclude": [
-      "src/"
+      "../src/"
     ],
     "compilerOptions": {
         "target": "ES2022",
