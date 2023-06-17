@@ -83,7 +83,7 @@ router.get('/history/:username', async function (req : Request, res : Response) 
       netWorth += balance.dataValues.amount
     })
 
-    datedNetWorths.push({ date: format(currentDate, 'MM-dd-yyyy'), total: netWorth });
+    datedNetWorths.push({ date: format(currentDate, 'MM-dd-yyyy'), Total: netWorth });
     currentDate.setDate(currentDate.getDate() - 7);
   }
 

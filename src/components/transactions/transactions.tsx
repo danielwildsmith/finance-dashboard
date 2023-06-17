@@ -192,7 +192,7 @@ export const Transactions = () => {
             <LegendContainer>
                 <LegendList>
                     {CATEGORIES.map((category, index) => (
-                        <LegendItem style={{ color: COLORS_MAP[category] }}>
+                        <LegendItem key={index} style={{ color: COLORS_MAP[category] }}>
                             <SquareIcon sx={{color: COLORS_MAP[category], fontSize: 8 }} />
                             {category}
                         </LegendItem>

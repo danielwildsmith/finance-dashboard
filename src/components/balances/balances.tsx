@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Totals } from "./totals";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import axios from "axios";
 import { GetUsername, isLoggedIn } from "../login";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ export interface TypedBalance {
 
 export interface DatedNetWorth {
     date: string,
-    total: number
+    Total: number
 }
 
 export const Balances = () => {
@@ -59,7 +59,7 @@ export const Balances = () => {
         return (
             <>
                 <Totals data={currentBalances} />
-                <Box sx={{height: '45vh', marginLeft: '3vw', marginRight: '3vw'}}>
+                <Box sx={{height: '43vh', marginLeft: '3vw', marginRight: '3vw'}}>
                     <NetWorthTimeGraph data={recentNetWorthData} />
                 </Box>
             </>

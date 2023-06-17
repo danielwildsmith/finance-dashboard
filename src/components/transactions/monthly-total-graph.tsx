@@ -21,6 +21,14 @@ const formatLabel = (label: string) => {
   return label;
 };
 
+const CustomOnHoverValueFormatter = (value : any) => {
+  if(typeof value === 'number') {
+    return `$${(value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+  }
+
+  return value;
+}
+
 export const MonthlyTotalGraph = ({ data }: { data: MonthlyTotalData[] | null }) => {
   if (data) {
     return (
@@ -39,7 +47,7 @@ export const MonthlyTotalGraph = ({ data }: { data: MonthlyTotalData[] | null })
           <CartesianGrid horizontal={false} strokeDasharray="none" stroke="#878fa0" />
           <XAxis type="number" tickFormatter={CustomXAxisFormatter} tickCount={5} stroke="#878fa0" />
           <YAxis type="category" dataKey="month" tickFormatter={CustomYAxisFormatter} stroke="#878fa0" />
-          <Tooltip labelFormatter={formatLabel}/>
+          <Tooltip labelFormatter={formatLabel} formatter={CustomOnHoverValueFormatter}/>
           {CATEGORIES.map((category, index) => {
             const result = (
               <Bar key={category} dataKey={category} stackId="stack" name={category} fill={COLORS_MAP[category]}>
