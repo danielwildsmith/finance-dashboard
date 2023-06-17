@@ -3,12 +3,10 @@ import MiniDrawer from "./components/sidebar"
 
 export const PageLayout = ({ ContentComponent, page, isLinked }: {ContentComponent: React.ElementType, page: string, isLinked: boolean}) => {
     return (
-      <div style={{display: 'flex'}}>
+     <div style={{display: 'flex', minWidth: 0}}>
           <MiniDrawer page={page} isLinked={isLinked}/>
-          <div style={{ flexGrow: 1, padding: '6px' }}>
-            <div style={{ marginTop: '10vh' }}>
-                <ContentComponent />
-            </div>
+          <div style={{ minWidth: 0, flexGrow: 1, marginTop: '10vh', padding: '6px' }}>
+            <ContentComponent />
           </div>
       </div>
     ) 

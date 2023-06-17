@@ -66,19 +66,23 @@ export const COLORS_MAP : { [key: string]: string } = {
 
 const LegendContainer = styled('div')({
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     width: '100%',
-    position: 'relative',
     marginTop: 22,
-    marginBottom: 6
+    marginBottom: 6,
 });
 
 const LegendList = styled('ul')({
     listStyle: 'none',
+    flexWrap: 'wrap',
     padding: 0,
     margin: 0,
     display: 'flex',
-    gap: 12
+    gap: 12,
+    maxWidth: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
 })
 
 const LegendItem = styled('li')({
@@ -87,6 +91,7 @@ const LegendItem = styled('li')({
     fontSize: 14,
     padding: 0,
     margin: 0,
+    flex: '0 0 auto'
 })
 
 export const Transactions = () => {
@@ -208,20 +213,21 @@ export const Transactions = () => {
                         <DateSelectionBox title={'Month'} options={monthOptions} />
                     </Grid>
                 </Grid>
-                <Grid container spacing={0}>
-                    <Grid item xs={12} sm={4} lg={2.5} height={'30vh'}>
-                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Distribution</Typography>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={12} lg={2.5} height={'33vh'}>
+                        <Typography variant='h6' noWrap sx={{color: '#878fa0', width: 'fit-content'}}>Distribution</Typography>
                         <CategoryDistributionChart data={categoryData} />
                     </Grid>
-                    <Grid item xs={12} sm={6} lg={6} height={'30vh'}>
+                    <Grid item xs={12} sm={12} lg={6} height={'33vh'}>
                         <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Spendings</Typography>
                         <CategorySpendingsGraph data={categoryData} />
                     </Grid>
-                    <Grid item xs={12} sm={4} lg={3.5} height={'30vh'}>
+                    <Grid item xs={12} sm={12} lg={3.5} height={'33vh'}>
                         <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Monthly Totals</Typography>
                         <MonthlyTotalGraph data={monthlyTotalsData} />
                     </Grid>
                 </Grid>
+
                 <CustomLegend />
                 <BasicEditingGrid data={transactionRows} />
             </>

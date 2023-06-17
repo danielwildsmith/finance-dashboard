@@ -20,7 +20,7 @@ export const CategoryDistributionChart = ({ data }: { data: CategoryData[] | nul
   if(data) {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={400} height={400} margin={{ top: 0, left: 0, right: 0, bottom: 0 }}>
+        <PieChart margin={{ top: 0, left: 0, right: 0, bottom: 0 }}>
           <Pie
             data={data}
             cx="50%"

@@ -65,8 +65,8 @@ export const BasicEditingGrid = ( { data }: { data: TransactionRow[] | null } ) 
     
     if (data) {
         return (
-            <Box > 
-                <div style={{ height: '43vh', width: '100%', padding: 12, backgroundColor: '#343a46' }}>
+            <>
+                <div style={{ height: '44vh', width: '100%', padding: 12, backgroundColor: '#343a46',}}>
                     <DataGrid
                         rows={data}
                         columns={columns}
@@ -94,10 +94,7 @@ export const BasicEditingGrid = ( { data }: { data: TransactionRow[] | null } ) 
                         <Alert {...snackbar} onClose={handleCloseSnackbar} />
                     </Snackbar>
                 )}
-            </Box>
-            
-      
-            
+            </>
         );
       }
       return <></>;      
@@ -105,9 +102,9 @@ export const BasicEditingGrid = ( { data }: { data: TransactionRow[] | null } ) 
 
 const columns: GridColDef[] = [
     { field: 'date', headerName: 'Date', editable: false },
-    { field: 'name', headerName: 'Name', flex: 0.75, editable: false },
+    { field: 'name', headerName: 'Name', flex: 0.70, minWidth: 180, editable: false },
     { field: 'amount', headerName: 'Amount', type: 'number', editable: false, sortComparator: amountComparator, valueGetter: (params: GridValueGetterParams) => `$${params.row.amount}` },
-    { field: 'category', headerName: 'Category', flex: 0.3, editable: false },
-    { field: 'note', headerName: 'Note', flex: 0.6, editable: true },
+    { field: 'category', headerName: 'Category', flex: 0.3, minWidth: 130, editable: false },
+    { field: 'note', headerName: 'Note', flex: 0.6, minWidth: 220, editable: true },
     { field: 'verified', headerName: 'Verified', type: 'boolean', sortable: false, filterable: false, editable: true, cellClassName: 'grid-verified' }
 ];
