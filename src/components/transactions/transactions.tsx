@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isLoggedIn } from "../login";
 import { CategoryDistributionChart } from "../transactions/distribution-chart";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { CategorySpendingsGraph } from "./spendings-graph";
 import axios from 'axios';
 import { GetUsername } from '../login';
@@ -14,6 +14,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { PageLayout } from "../../page-layout";
+import { styled } from '@mui/material/styles';
+import SquareIcon from '@mui/icons-material/Square';
 
 export interface CategoryData {
     category: string,
@@ -24,15 +26,17 @@ export interface CategoryData {
 }
 
 export interface MonthlyTotalData {
-    month: string,
-    FOOD_AND_DRINK: number,
-    GENERAL_MERCHANDISE: number,
-    TRANSPORTATION: number,
-    RENT_AND_UTILITIES: number,
-    TRAVEL: number,
-    TRANSFER_OUT: number,
-    GENERAL_SERVICES: number,
-    OTHER: number
+  month: string;
+  'Food And Drink': number;
+  'General Merchandise': number;
+  'Transportation': number;
+  'Rent And Utilities': number;
+  'Travel': number;
+  'Transfer Out': number;
+  'General Services': number;
+  'Other': number;
+  total: number
+  [key: string]: number | string;
 }
 
 export interface TransactionRow {
@@ -59,6 +63,31 @@ export const COLORS_MAP : { [key: string]: string } = {
     'General Services': '#E5005E',
     'Other': '#555555'
 };
+
+const LegendContainer = styled('div')({
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    position: 'relative',
+    marginTop: 22,
+    marginBottom: 6
+});
+
+const LegendList = styled('ul')({
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    gap: 12
+})
+
+const LegendItem = styled('li')({
+    display: 'list-item',
+    alignItems: 'center',
+    fontSize: 14,
+    padding: 0,
+    margin: 0,
+})
 
 export const Transactions = () => {
     const date = new Date();
@@ -100,7 +129,7 @@ export const Transactions = () => {
         .then(res => {
             setMonthlyTotalsData(res.data);
         })
-        .catch(error => {
+        .catch(error => { 
             console.error(error);
         });
     }
@@ -129,52 +158,71 @@ export const Transactions = () => {
             fetchData();
     }, [year, month]);
 
+    const DateSelectionBox = ({ title, options }: {title: string, options: string[] }) => {
+        const selectedValue = title === 'Month' ? month.padStart(2, "0") : year;
+        return (
+            <Box sx={{ width: 65 }}>
+                <FormControl variant="standard" fullWidth sx={{margin: 0}}>
+                    <InputLabel sx={{color: '#878fa0'}}>{title}</InputLabel>
+                        <Select
+                            value={selectedValue}
+                            label={title}
+                            onChange={title === 'Month' ? handleMonthChange : handleYearChange}
+                            
+                            sx={{color: '#f6f7f9', ':before': { borderBottomColor: '#878fa0'}, '.MuiSelect-icon': {color: '#f6f7f9'}}}
+                        >
+                            {options.map((option) => (
+                                <MenuItem value={option} key={option} >
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                </FormControl>
+            </Box>
+        )
+    }
+
+    const CustomLegend = () => {
+        return (
+            <LegendContainer>
+                <LegendList>
+                    {CATEGORIES.map((category, index) => (
+                        <LegendItem style={{ color: COLORS_MAP[category] }}>
+                            <SquareIcon sx={{color: COLORS_MAP[category], fontSize: 8 }} />
+                            {category}
+                        </LegendItem>
+                    ))}   
+                </LegendList>
+            </LegendContainer>
+        )
+    }
+
     const Content = () => {
         return (
             <>
-                <Box sx={{ width: 220 }}>
-                    <FormControl fullWidth>
-                        <InputLabel>Year</InputLabel>
-                        <Select
-                            value={year}
-                            label="Year"
-                            onChange={handleYearChange}
-                            >
-                            {yearOptions.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Box>
-                <Box sx={{ width: 220 }}>
-                    <FormControl fullWidth>
-                        <InputLabel>Month</InputLabel>
-                        <Select
-                            value={monthOptions[parseInt(month) - 1]}
-                            label="Month"
-                            onChange={handleMonthChange}
-                            >
-                            {monthOptions.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Box>
+                <Grid container spacing={3} sx={{marginBottom: 0.75, width: 'fit-content'}}>
+                    <Grid item>
+                        <DateSelectionBox title={'Year'} options={yearOptions} />
+                    </Grid>
+                    <Grid item>
+                        <DateSelectionBox title={'Month'} options={monthOptions} />
+                    </Grid>
+                </Grid>
                 <Grid container spacing={0}>
-                    <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
+                    <Grid item xs={12} sm={4} lg={2.5} height={'30vh'}>
+                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Distribution</Typography>
                         <CategoryDistributionChart data={categoryData} />
                     </Grid>
-                    <Grid item xs={12} sm={6} lg={5} height={'50vh'}>
+                    <Grid item xs={12} sm={6} lg={6} height={'30vh'}>
+                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Spendings</Typography>
                         <CategorySpendingsGraph data={categoryData} />
                     </Grid>
-                    <Grid item xs={12} sm={4} lg={3} height={'50vh'}>
+                    <Grid item xs={12} sm={4} lg={3.5} height={'30vh'}>
+                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Monthly Totals</Typography>
                         <MonthlyTotalGraph data={monthlyTotalsData} />
                     </Grid>
                 </Grid>
+                <CustomLegend />
                 <BasicEditingGrid data={transactionRows} />
             </>
         )

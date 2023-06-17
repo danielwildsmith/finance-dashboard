@@ -10,8 +10,8 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-      {`${(percent * 100).toFixed(0)}%`}
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={12}>
+      {percent === 0 ? null : `${(percent * 100).toFixed(0)}%`}
     </text>
   );
 };
@@ -20,14 +20,14 @@ export const CategoryDistributionChart = ({ data }: { data: CategoryData[] | nul
   if(data) {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={400} height={400}>
+        <PieChart width={400} height={400} margin={{ top: 0, left: 0, right: 0, bottom: 0 }}>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
             labelLine={false}
             label={renderCustomizedLabel}
-            outerRadius={80}
+            outerRadius={'85%'}
             fill="#8884d8"
             dataKey="amount"
           >

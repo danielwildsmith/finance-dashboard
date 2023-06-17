@@ -1,18 +1,22 @@
 import React from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridComparatorFn, GridToolbarContainer, GridToolbarFilterButton, GridToolbarExport, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowModel, GridComparatorFn, GridToolbarContainer, GridToolbarFilterButton, GridToolbarExport, GridValueGetterParams, GridRowParams } from '@mui/x-data-grid';
 import { TransactionRow } from './transactions';
 import Snackbar from '@mui/material/Snackbar';
 import Alert, { AlertProps } from '@mui/material/Alert';
 import axios from 'axios';
+import { Typography, Box } from '@mui/material';
 
 const amountComparator : GridComparatorFn<String> = (a1, a2): number =>
     parseFloat(a1.slice(1)) - parseFloat(a2.slice(1)); 
 
 const CustomToolbar = () => {
     return (
-        <GridToolbarContainer>
-            <GridToolbarFilterButton />
-            <GridToolbarExport />
+        <GridToolbarContainer sx={{justifyContent: 'space-between'}}>
+            <Typography variant='h6' noWrap sx={{color: '#139eca'}}>Accountant</Typography>
+            <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center'}}>
+                <GridToolbarFilterButton sx={{color: '#139eca'}}/>
+                <GridToolbarExport sx={{color: '#139eca'}}/>
+            </div>
         </GridToolbarContainer>
     );
 }
@@ -55,38 +59,48 @@ export const BasicEditingGrid = ( { data }: { data: TransactionRow[] | null } ) 
         setSnackbar({ children: error.message, severity: 'error' });
     }
 
-    if(data) {
+    const renderRow = (params: GridRowParams) => {
+        return <div style={{ borderBottom: '1px solid #878fa0' }}>{params.row.name}</div>;
+      };
+    
+    if (data) {
         return (
-            <div style={{ height: 300, width: '100%' }}>
-            <DataGrid 
-                rows={data} 
-                columns={columns} 
-                hideFooter 
-                processRowUpdate={processRowUpdate} 
-                onProcessRowUpdateError={handleProcessRowUpdateError}
-                initialState={{
-                    sorting: {
-                      sortModel: [{ field: 'date', sort: 'desc' }],
-                    },
-                }}
-                slots={{ toolbar: CustomToolbar }} 
-            />
+            <Box > 
+                <div style={{ height: '43vh', width: '100%', padding: 12, backgroundColor: '#343a46' }}>
+                    <DataGrid
+                        rows={data}
+                        columns={columns}
+                        hideFooter
+                        processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={handleProcessRowUpdateError}
+                        initialState={{
+                            sorting: {
+                            sortModel: [{ field: 'date', sort: 'desc' }],
+                            },
+                        }}
+                        slots={{ toolbar: CustomToolbar }}
+                        sx={{ m: 0, color: '#878fa0', border: 0, '& .MuiDataGrid-toolbarContainer': { margin: 0, padding: 0 },
+                        '& .MuiDataGrid-main': { padding: 0 },}}
+                    />
+                </div>
 
-
-            {!!snackbar && (
-                <Snackbar
-                    open
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                    onClose={handleCloseSnackbar}
-                    autoHideDuration={2000}
-                >
-                    <Alert {...snackbar} onClose={handleCloseSnackbar} />
-                </Snackbar>
-            )}
-            </div>
+                {!!snackbar && (
+                    <Snackbar
+                        open
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                        onClose={handleCloseSnackbar}
+                        autoHideDuration={2000}
+                    >
+                        <Alert {...snackbar} onClose={handleCloseSnackbar} />
+                    </Snackbar>
+                )}
+            </Box>
+            
+      
+            
         );
-    }
-    return <></>;
+      }
+      return <></>;      
 }
 
 const columns: GridColDef[] = [
@@ -95,5 +109,5 @@ const columns: GridColDef[] = [
     { field: 'amount', headerName: 'Amount', type: 'number', editable: false, sortComparator: amountComparator, valueGetter: (params: GridValueGetterParams) => `$${params.row.amount}` },
     { field: 'category', headerName: 'Category', flex: 0.3, editable: false },
     { field: 'note', headerName: 'Note', flex: 0.6, editable: true },
-    { field: 'verified', headerName: 'Verified', type: 'boolean', sortable: false, filterable: false, editable: true }
+    { field: 'verified', headerName: 'Verified', type: 'boolean', sortable: false, filterable: false, editable: true, cellClassName: 'grid-verified' }
 ];

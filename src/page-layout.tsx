@@ -5,8 +5,8 @@ export const PageLayout = ({ ContentComponent, page, isLinked }: {ContentCompone
     return (
       <div style={{display: 'flex'}}>
           <MiniDrawer page={page} isLinked={isLinked}/>
-          <div style={{ flexGrow: 1, padding: '16px' }}>
-            <div style={{ marginTop: '14vh' }}>
+          <div style={{ flexGrow: 1, padding: '6px' }}>
+            <div style={{ marginTop: '10vh' }}>
                 <ContentComponent />
             </div>
           </div>

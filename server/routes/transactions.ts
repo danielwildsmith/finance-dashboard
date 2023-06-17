@@ -75,18 +75,14 @@ router.get('/categorized/:username/:yyyy/:mm', async function (req : Request, re
 
   const getByCategoryData = (month_transactions : Model<any, any>[]): { [category: string]: number } => {
     let category_amounts_map: { [category: string]: number } = {};
+    CATEGORIES.forEach(category => category_amounts_map[category] = 0)
     month_transactions.forEach(transaction => {
       if (transaction.dataValues.category && transaction.dataValues.amount > 0) {
         let category : string = JSON.parse(transaction.dataValues.category);
         category = category.replace(/_/g, ' ').replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
         if(!CATEGORIES.includes(category))
           category = 'Other';
-        if(category_amounts_map[category]) {
-          category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
-        }
-        else {
-          category_amounts_map[category] = Number(transaction.dataValues.amount.toFixed(2));
-        }
+        category_amounts_map[category] = Number((category_amounts_map[category] + transaction.dataValues.amount).toFixed(2));
       }
     });
     return category_amounts_map;
@@ -201,16 +197,36 @@ router.get('/totals/:username/:yyyy/:mm', async function (req : Request, res : R
   };
 
   const getTemplateData = (month : string) : MonthlyTotalData => {
-    return { 
-      month: month, FOOD_AND_DRINK: 0, GENERAL_MERCHANDISE: 0, TRANSPORTATION: 0, RENT_AND_UTILITIES: 0, 
-      TRAVEL: 0, TRANSFER_OUT: 0, GENERAL_SERVICES: 0, OTHER: 0 
+    return {
+      month: month,
+      'Food And Drink': 0,
+      'General Merchandise': 0,
+      'Transportation': 0,
+      'Rent And Utilities': 0,
+      'Travel': 0,
+      'Transfer Out': 0,
+      'General Services': 0,
+      'Other': 0,
+      total: 0
     };
   }
   
+  // calculate total (for label)
+  const getTotal = (categoryAmounts : { [category: string]: number } ) => {
+    let total = 0;
+    for(const category in categoryAmounts) {
+      total += categoryAmounts[category];
+    }
+    return total;
+  }
+
+  // for y axis translating number to month format
+  let prev_month = previous_month.toString().length === 1 ? previous_month.toString().padStart(2, "0") : previous_month.toString();
+  let penult_month = penultimate_month.toString().length === 1 ? penultimate_month.toString().padStart(2, "0") : penultimate_month.toString();
   const finalData = [
-    { ...getTemplateData(month), ...getByCategoryData(selected_month_transactions)},
-    { ...getTemplateData(previous_month.toString()), ...getByCategoryData(previous_month_transactions)},
-    { ...getTemplateData(penultimate_month.toString()), ...getByCategoryData(penultimate_month_transactions)}
+    { ...getTemplateData(month), ...getByCategoryData(selected_month_transactions), total: getTotal(getByCategoryData(selected_month_transactions))},
+    { ...getTemplateData(prev_month), ...getByCategoryData(previous_month_transactions), total: getTotal(getByCategoryData(previous_month_transactions))},
+    { ...getTemplateData(penult_month), ...getByCategoryData(penultimate_month_transactions), total: getTotal(getByCategoryData(penultimate_month_transactions))}
   ]
   
   res.status(200).send(finalData);
