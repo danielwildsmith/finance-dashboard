@@ -18,8 +18,7 @@ router.post('/signup', async (req : Request, res : Response) => {
     }
 
     // Add user to DB
-    const user = await User.create({ username: req.body.username, password: req.body.password });
-    console.log(user);
+    await User.create({ username: req.body.username, password: req.body.password });
 
     res.status(200).send("User signed up successfully!");
 });

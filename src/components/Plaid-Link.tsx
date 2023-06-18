@@ -3,11 +3,10 @@
 // obtain a link token to be used in the Link component
 import React, { useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import styled from '@emotion/styled/types/base';
+import axios from 'axios';
 
-const App = () => {
+const App = ({username, accountLinked}: {username: string, accountLinked: boolean}) => {
   const [linkToken, setLinkToken] = useState(null);
   const generateToken = async () => {
     const response = await fetch('/api/user-tokens/create', {
@@ -19,7 +18,7 @@ const App = () => {
   useEffect(() => {
     generateToken();
   }, []);
-  return linkToken != null ? <Link linkToken={linkToken} /> : <></>;
+  return linkToken != null ? <Link linkToken={linkToken} username={username} accountLinked={accountLinked} /> : <></>;
 };
 
 // LINK COMPONENT
@@ -27,21 +26,43 @@ const App = () => {
 // in configuration to initialize Plaid Link
 interface LinkProps {
   linkToken: string | null;
+  username: string;
+  accountLinked: boolean;
 }
 
 const Link: React.FC<LinkProps> = (props: LinkProps) => {
     // @ts-ignore
-  const onSuccess = React.useCallback((public_token, metadata) => {
-    // send public_token to server
-    const response = fetch('/api/user-tokens/set', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ public_token }),
-    });
-    // Handle response ...
-  }, []);
+    const onSuccess = React.useCallback((public_token, metadata) => {
+      const tokenReq = { public_token: public_token };
+      axios
+        .post(`/api/user-tokens/set/${props.username}`, tokenReq)
+        .then((res) => {
+          const req = { access_token: res.data };
+    
+          // Create an array of axios requests
+          const requests = [
+            axios.post(`/api/transactions/${props.username}`, req),
+            axios.post(`/api/balances/${props.username}`, req),
+          ];
+    
+          // Wait for all requests to resolve
+          Promise.all(requests)
+            .then((responses) => {
+              console.log('Transaction seeding: success');
+              console.log('Balance seeding: success');
+              const isSuccess = responses.every((response) => response.status === 200);
+              if (isSuccess) 
+                window.location.reload();
+            })
+            .catch((error) => {
+              console.error('Error:', error.message);
+            });
+        })
+        .catch((error) => {
+          console.error('Failed on external axios Link post:', error.message);
+        });
+    }, []);
+    
   const config: Parameters<typeof usePlaidLink>[0] = {
     token: props.linkToken!,
     onSuccess,
@@ -55,7 +76,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
         ':hover': { backgroundColor: '#1a1e24', color: '#139eca'}
       }}
     >
-        Link An Account
+      {props.accountLinked ? 'Link Another Account' : 'Link An Account'}
     </Button>
   );
 };

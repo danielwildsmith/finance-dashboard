@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardActions, CardContent, Button, Typography, Container, Box } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import axios from 'axios';
-import { GetUsername } from './pages/login';
+import { GetUsername } from './pages/auth';
 import { NorthOutlined, SouthOutlined, CreditCard } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import PlaidLink from './Plaid-Link';
@@ -53,10 +53,10 @@ const DashboardCard = ({type}: {type: string}) => {
             } 
             else {
                 return (
-                    <span>
-                        <SouthOutlined sx={{color: '#c71414'}}></SouthOutlined>
-                        <Typography variant='h6' sx={{color: '#c71414'}}>{roundedPercentageChange}%</Typography>
-                    </span>
+                    <div style={{display: 'flex', gap: 4, marginTop: 12, paddingBottom: 12, borderBottom: '1px solid #444c5d', justifyContent: 'center', alignItems: 'center'}}>
+                        <SouthOutlined sx={{color: '#1ebd1e', fontSize: 28}} />
+                        <Typography variant='h6' sx={{color: '#1ebd1e'}}>{roundedPercentageChange}%</Typography>
+                    </div>
                 )
             }   
         }
@@ -102,27 +102,38 @@ const DashboardCard = ({type}: {type: string}) => {
   return <></>;
 }
 
-export const DashboardCards = () => {
+export const DashboardCards = ({accountLinked}: {accountLinked: boolean}) => {
     return (
         <>
-            <div style={{height: '84vh', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-                <Grid container spacing={2} sx={{justifyContent: 'center'}}>
-                    <Grid item xs={12} sm={10} lg={3.5} height={'fit-content'} >
-                        <DashboardCard type={'balances'} />
+            <div style={{height: '84vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                { !accountLinked ? 
+                    <>
+                        <Typography variant='h5' color={'#878fa0'} sx={{maxWidth: '60vw', textAlign: 'center'}}>
+                            Link a financial account to learn detailed insights about your transactions and balances, powered by Plaid.
+                        </Typography>
+                    </>                    
+                    :
+                    <Grid container spacing={2} sx={{justifyContent: 'center'}}>
+                        <Grid item xs={12} sm={10} lg={3.5} height={'fit-content'} >
+                            <DashboardCard type={'balances'} />
+                        </Grid>
+                        <Grid item xs={12} sm={10} lg={3.5} height={'fit-content'} >
+                            <DashboardCard type='transactions'/>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={10} lg={3.5} height={'fit-content'} >
-                        <DashboardCard type='transactions'/>
-                    </Grid>
-                </Grid>
+                }
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: 16}}>
-                    <PlaidLink />
+                    <PlaidLink username={GetUsername()} accountLinked={accountLinked} />
                 </div>       
             </div>
-            <div style={{ display: 'flex', alignItems: 'flex-end', textAlign: 'center' }}>
+            { !accountLinked ? 
+                <></> :
+                <div style={{ display: 'flex', alignItems: 'flex-end', textAlign: 'center' }}>
                     <Typography variant='body1' sx={{ color: '#707787', width: '100%'}}>
                             *Data comparisons are monthly, requiring a time period of 30 days to pass after account creation.
                     </Typography>
                 </div>
+            }
         </>
     )
 }

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn } from "./login";
+import { isAccountLinked, isLoggedIn } from "./auth";
 import { CategoryDistributionChart } from "../charts/transactions-category-distribution";
 import { Grid, Typography } from "@mui/material";
 import { CategorySpendingsGraph } from "../charts/transactions-spendings";
 import axios from 'axios';
-import { GetUsername } from './login';
+import { GetUsername } from './auth';
 import { MonthlyTotalGraph } from "../charts/transactions-totals";
 import { BasicEditingGrid } from "../transactions-table";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -101,6 +101,7 @@ export const Transactions = () => {
     const [categoryData, setCategoryData] = useState<CategoryData[] | null>(null);
     const [monthlyTotalsData, setMonthlyTotalsData] = useState<MonthlyTotalData[] | null>(null);
     const [transactionRows, setTransactionRows] = useState<TransactionRow[] | null>(null);
+    const [accountLinked, setAccountLinked] = useState(false);
 
     const navigate = useNavigate();
     let formattedMonth = month.length === 1 ? month.padStart(2, "0") : month;
@@ -151,8 +152,16 @@ export const Transactions = () => {
 
     // if user is not logged in redirect to signin. when signed in, execute each time month/year is changed
     useEffect(() => {
-        if(!isLoggedIn())
-            navigate('/');
+        const authenticate = async () => {
+            if (!isLoggedIn()) {
+              navigate('/');
+            } else {
+                const linked = await isAccountLinked();
+                setAccountLinked(linked);
+                if(!linked)
+                    navigate('/dashboard');
+            }
+        };
 
             const fetchData = async () => {
                 await getCategoryData();
@@ -160,6 +169,7 @@ export const Transactions = () => {
                 await getTransactionRows();
               };
 
+              authenticate();
             fetchData();
     }, [year, month]);
 
@@ -234,5 +244,5 @@ export const Transactions = () => {
         )
     }
 
-    return <PageLayout page={'Transactions'} isLinked={true} ContentComponent={Content} />
+    return <PageLayout page={'Transactions'} isLinked={accountLinked} ContentComponent={Content} />
 };

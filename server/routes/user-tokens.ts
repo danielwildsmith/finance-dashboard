@@ -31,9 +31,11 @@ router.post('/create', async (request : Request, response : Response) => {
   }
 });
 
-router.post('/set', async (request : Request, response : Response, ) => {
+router.post('/set/:username', async (request : Request, response : Response, ) => {
   // exchanges the public token provided from Link component for a permanent access token
   const publicToken = request.body.public_token;
+  const username : string = request.params.username;
+
   try {
     const exchange_response = await plaidClient.itemPublicTokenExchange({
       public_token: publicToken,
@@ -43,15 +45,24 @@ router.post('/set', async (request : Request, response : Response, ) => {
     // associated with the currently signed-in user
     const accessToken = exchange_response.data.access_token;
     const itemID = exchange_response.data.item_id;
-    console.log(itemID);
 
-    await UserToken.create({ access_token: accessToken, username: "user_good" });
+    await UserToken.create({ access_token: accessToken, username: username });
   
-    response.json({ public_token_exchange: 'complete' });
+    response.status(200).json(accessToken);
   } catch (error) {
     // handle error
     console.log(error);
   }
+});
+
+router.get('/:username', async (req : Request, res : Response, ) => {
+  const username : string = req.params.username;
+
+  const accessTokens = await UserToken.findAll({
+    where: {username: username}
+  });
+
+  res.status(200).json(accessTokens.length);
 });
 
 export default router;

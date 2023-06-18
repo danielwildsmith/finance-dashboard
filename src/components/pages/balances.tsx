@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Totals } from "../charts/balances-totals";
 import { Box, Grid } from "@mui/material";
 import axios from "axios";
-import { GetUsername, isLoggedIn } from "./login";
+import { GetUsername, isAccountLinked, isLoggedIn } from "./auth";
 import { useNavigate } from "react-router-dom";
 import { NetWorthTimeGraph } from "../charts/balances-time";
 import { PageLayout } from "../page-layout";
@@ -20,6 +20,7 @@ export interface DatedNetWorth {
 export const Balances = () => {
     const [currentBalances, setCurrentBalances] = useState<TypedBalance[] | null>(null);
     const [recentNetWorthData, setRecentNetWorthData] = useState<DatedNetWorth[] | null>(null);
+    const [accountLinked, setAccountLinked] = useState(false);
 
     const navigate = useNavigate();
 
@@ -44,8 +45,16 @@ export const Balances = () => {
     };
 
     useEffect(() => {
-        if(!isLoggedIn())
-            navigate('/');
+        const authenticate = async () => {
+            if (!isLoggedIn()) {
+              navigate('/');
+            } else {
+                const linked = await isAccountLinked();
+                setAccountLinked(linked);
+                if(!linked)
+                    navigate('/dashboard');
+            }
+        };
 
             const fetchData = async () => {
                 await getCurrentBalances();
@@ -53,6 +62,7 @@ export const Balances = () => {
               };
 
             fetchData();
+            authenticate();
     }, []);
 
     const Content = () => {
@@ -66,5 +76,5 @@ export const Balances = () => {
         )
     }
     
-    return <PageLayout page={'Balances'} isLinked={true} ContentComponent={Content} />
+    return <PageLayout page={'Balances'} isLinked={accountLinked} ContentComponent={Content} />
 }

@@ -2,9 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AuthForm } from './components/pages/login';
+import { AuthForm } from './components/pages/auth';
 import { Dashboard } from './components/pages/dashboard';
-import App from './components/Plaid-Link';
 import { Transactions } from './components/pages/transactions';
 import { Balances } from './components/pages/balances';
 
