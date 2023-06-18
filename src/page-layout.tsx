@@ -1,5 +1,5 @@
 import React from "react"
-import MiniDrawer from "./components/sidebar"
+import MiniDrawer from "./components/menu"
 
 export const PageLayout = ({ ContentComponent, page, isLinked }: {ContentComponent: React.ElementType, page: string, isLinked: boolean}) => {
     return (

@@ -16,7 +16,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import {Dashboard, AccountBalance, CreditCard} from '@mui/icons-material';
+import {Dashboard, AccountBalance, CreditCard, GitHub} from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 200;
 
@@ -98,6 +100,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer( { page, isLinked }: { page: string, isLinked: boolean } ) {
   let theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -112,6 +115,11 @@ export default function MiniDrawer( { page, isLinked }: { page: string, isLinked
         return ['Dashboard', 'Balances', 'Transactions']
     else
         return ['Dashboard']
+  }
+
+  const handleLogOut = () => {
+    document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    navigate('/')
   }
 
   return (
@@ -131,9 +139,27 @@ export default function MiniDrawer( { page, isLinked }: { page: string, isLinked
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            { page }
-          </Typography>
+          <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+            <Typography variant="h6" noWrap component="div">
+              { page }
+            </Typography>
+            <div>
+              <IconButton
+                onClick={() => window.open('https://github.com/danielwildsmith/finance-dashboard', '_blank')}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.cursor = 'pointer';
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.cursor = 'default';
+                }}
+              >
+                <GitHub sx={{color: '#139eca', fontSize: 32, marginRight: 0.5}} />
+              </IconButton>
+              <Button sx={{color: '#139eca', fontSize: 15}} onClick={handleLogOut} >
+                Log out
+              </Button>
+            </div>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open} >
