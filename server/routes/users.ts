@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { User } from '../models/user';
 const router = express.Router();
 
-// TODO: add JWT authentication, cookie integration
+// TODO: add JWT authentication
 
 router.post('/signup', async (req : Request, res : Response) => {
     if(!(req.body.username && req.body.password)) {
@@ -44,13 +44,6 @@ router.post('/signin', async (req : Request, res : Response) => {
     }
 
     res.status(200).send("User signed in successfully");
-});
-
-router.post('/logout', async (req : Request, res : Response) => {
-    // delete cookie
-    res.cookie('username', req.body.username, { maxAge: 0 });
-
-    res.status(200).send("User logged out successfully");
 });
 
 export default router;

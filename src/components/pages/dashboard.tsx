@@ -15,6 +15,9 @@ export const Dashboard = () => {
 
     const Content = () => {
         return (
+            // <Typography variant='h5' color={'#878fa0'}>
+            //     Link an account to learn detailed insights about your transactions and balances, powered by Plaid.
+            //   </Typography>
             <DashboardCards />
         )
     }
