@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
-import { COLORS_MAP, CategoryData } from './transactions';
+import { COLORS_MAP, CategoryData } from '../pages/transactions';
 
 const RADIAN = Math.PI / 180;
 //@ts-ignore

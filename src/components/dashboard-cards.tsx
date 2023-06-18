@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardActions, CardContent, Button, Typography, Container, Box } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import axios from 'axios';
-import { GetUsername } from '../login';
+import { GetUsername } from './pages/login';
 import { NorthOutlined, SouthOutlined, CreditCard } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import PlaidLink from './Plaid-Link';

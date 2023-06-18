@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Totals } from "./totals";
+import { Totals } from "../charts/balances-totals";
 import { Box, Grid } from "@mui/material";
 import axios from "axios";
-import { GetUsername, isLoggedIn } from "../login";
+import { GetUsername, isLoggedIn } from "./login";
 import { useNavigate } from "react-router-dom";
-import { NetWorthTimeGraph } from "./time-graph";
-import { PageLayout } from "../../page-layout";
+import { NetWorthTimeGraph } from "../charts/balances-time";
+import { PageLayout } from "../page-layout";
 
 export interface TypedBalance {
     type: string,

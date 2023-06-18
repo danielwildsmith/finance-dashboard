@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, ResponsiveContainer } from 'recharts';
-import { CATEGORIES, COLORS_MAP, CategoryData } from './transactions';
+import { CATEGORIES, COLORS_MAP, CategoryData } from '../pages/transactions';
 import chroma from 'chroma-js';
 
 const CustomYAxisFormatter = (value : number) => `$${value.toLocaleString()}`;

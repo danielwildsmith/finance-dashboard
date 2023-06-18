@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataGrid, GridColDef, GridRowModel, GridComparatorFn, GridToolbarContainer, GridToolbarFilterButton, GridToolbarExport, GridValueGetterParams, GridRowParams } from '@mui/x-data-grid';
-import { TransactionRow } from './transactions';
+import { TransactionRow } from './pages/transactions';
 import Snackbar from '@mui/material/Snackbar';
 import Alert, { AlertProps } from '@mui/material/Alert';
 import axios from 'axios';

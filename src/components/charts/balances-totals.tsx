@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from 'recharts';
-import { TypedBalance } from './balances';
+import { TypedBalance } from '../pages/balances';
 import { Grid, Typography } from '@mui/material';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#227878', '#9C27B0', '#E5005E', '#555555'];

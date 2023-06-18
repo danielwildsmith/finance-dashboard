@@ -3,9 +3,9 @@ import { plaidClient } from '../utils/config';
 import { AccountsBalanceGetRequest } from 'plaid';
 import { Balance } from '../models/balance';
 import { format } from 'date-fns';
-import { DatedNetWorth, TypedBalance } from '../../src/components/balances/balances';
+import { DatedNetWorth, TypedBalance } from '../../src/components/pages/balances';
 import { Op } from 'sequelize';
-import { MonthlyAmountComparison } from '../../src/components/dashboard/cards';
+import { MonthlyAmountComparison } from '../../src/components/dashboard-cards';
 
 const router = express.Router();
 

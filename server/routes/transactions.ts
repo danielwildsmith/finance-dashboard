@@ -4,8 +4,8 @@ import { TransactionsGetRequest } from 'plaid';
 import { format } from 'date-fns';
 import { Transaction } from '../models/transaction';
 import { Op, Model } from 'sequelize';
-import { CATEGORIES, CategoryData, MonthlyTotalData, TransactionRow } from '../../src/components/transactions/transactions';
-import { MonthlyAmountComparison } from '../../src/components/dashboard/cards';
+import { CATEGORIES, CategoryData, MonthlyTotalData, TransactionRow } from '../../src/components/pages/transactions';
+import { MonthlyAmountComparison } from '../../src/components/dashboard-cards';
 
 const router = express.Router();
 

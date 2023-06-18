@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn } from "../login";
-import { CategoryDistributionChart } from "../transactions/distribution-chart";
+import { isLoggedIn } from "./login";
+import { CategoryDistributionChart } from "../charts/transactions-category-distribution";
 import { Grid, Typography } from "@mui/material";
-import { CategorySpendingsGraph } from "./spendings-graph";
+import { CategorySpendingsGraph } from "../charts/transactions-spendings";
 import axios from 'axios';
-import { GetUsername } from '../login';
-import { MonthlyTotalGraph } from "./monthly-total-graph";
-import { BasicEditingGrid } from "./table";
+import { GetUsername } from './login';
+import { MonthlyTotalGraph } from "../charts/transactions-totals";
+import { BasicEditingGrid } from "../transactions-table";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import { PageLayout } from "../../page-layout";
+import { PageLayout } from "../page-layout";
 import { styled } from '@mui/material/styles';
 import SquareIcon from '@mui/icons-material/Square';
 

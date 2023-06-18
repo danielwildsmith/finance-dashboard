@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DatedNetWorth } from './balances';
+import { DatedNetWorth } from '../pages/balances';
 import { Typography } from '@mui/material';
 
 const CustomYAxisFormatter = (value : number) => `$${value.toLocaleString()}`;

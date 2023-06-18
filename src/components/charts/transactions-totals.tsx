@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, Legend, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label, LabelList } from 'recharts';
-import { CATEGORIES, COLORS_MAP, MonthlyTotalData } from './transactions';
+import { CATEGORIES, COLORS_MAP, MonthlyTotalData } from '../pages/transactions';
 import { styled } from '@mui/material/styles';
 
 const CustomYAxisFormatter = (value : string) => {

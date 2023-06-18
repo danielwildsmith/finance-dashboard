@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
-import { LoginForm } from './components/login';
-import { Dashboard } from './components/dashboard/dashboard';
-import App from './components/dashboard/Plaid-Link';
-import { Transactions } from './components/transactions/transactions';
-import { Balances } from './components/balances/balances';
+import { LoginForm } from './components/pages/login';
+import { Dashboard } from './components/pages/dashboard';
+import App from './components/Plaid-Link';
+import { Transactions } from './components/pages/transactions';
+import { Balances } from './components/pages/balances';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement!);
