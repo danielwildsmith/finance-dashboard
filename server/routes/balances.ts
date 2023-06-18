@@ -9,14 +9,34 @@ import { MonthlyAmountComparison } from '../../src/components/dashboard-cards';
 
 const router = express.Router();
 
-router.post('/', async function (req : Request, res : Response) {
+router.post('/:username', async function (req : Request, res : Response) {
+  const username = req.params.username;
+  const currentDate = new Date();
+  const formattedDate : string = format(currentDate, 'yyyy-MM-dd');
+
   const balancesReq: AccountsBalanceGetRequest = {
     access_token: req.body.access_token,
   };
 
   try {
       const response = await plaidClient.accountsBalanceGet(balancesReq);
-      res.send(response.data.accounts);
+      response.data.accounts.forEach(account => { 
+        (async () => {
+            await Balance.findOrCreate(
+                { 
+                    where: { account_id: account.account_id, date: formattedDate},
+                    defaults: 
+                        {
+                            amount: account.balances.current,
+                            account_name: account.name,
+                            type: account.subtype,
+                            username: username
+                        }
+                }
+            );
+        })();
+      });
+      res.sendStatus(200);
   } catch (error) {
     console.error(error);
   }

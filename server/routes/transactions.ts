@@ -10,9 +10,10 @@ import { MonthlyAmountComparison } from '../../src/components/dashboard-cards';
 const router = express.Router();
 
 // for seeding the db
-router.post('/', async function (req : Request, res : Response) {
+router.post('/:username', async function (req : Request, res : Response) {
   const currentDate = new Date();
   const formattedDate : string = format(currentDate, 'yyyy-MM-dd');
+  const username = req.params.username;
   
   const transactionsReq: TransactionsGetRequest = {
     access_token: req.body.access_token,
@@ -23,7 +24,25 @@ router.post('/', async function (req : Request, res : Response) {
 
   try {
     const transactions = await plaidClient.transactionsGet(transactionsReq);
-    res.send(transactions.data.transactions);
+    transactions.data.transactions.forEach(transaction => { 
+      (async () => {
+          await Transaction.findOrCreate(
+              { 
+                  where: { transaction_id: transaction.transaction_id },
+                  defaults: 
+                      {
+                          date: transaction.date,
+                          name: transaction.merchant_name,
+                          //@ts-ignore
+                          category: JSON.stringify(transaction.personal_finance_category.primary),
+                          amount: transaction.amount,
+                          username: username
+                      }
+              }
+          );
+      })();
+    });
+    res.sendStatus(200);
   } catch (error) {
     console.log(error);
   }
