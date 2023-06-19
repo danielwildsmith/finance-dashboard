@@ -6,6 +6,7 @@ import { AuthForm } from './components/pages/auth';
 import { Dashboard } from './components/pages/dashboard';
 import { Transactions } from './components/pages/transactions';
 import { Balances } from './components/pages/balances';
+import { PageNotFound } from './components/pages/not-found';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement!);
@@ -20,11 +21,11 @@ root.render(
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/balances" element={<Balances />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router> 
   </>
 );
-// <Route path="*" element={<NotFound />} />
 
 /*
   COLOR PALETTE
