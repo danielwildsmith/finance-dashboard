@@ -18,6 +18,7 @@
     "@types/react-dom": "^18.2.4",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.4.0",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "chroma-js": "^2.4.2",
     "cookie-parser": "^1.4.6",
@@ -25,6 +26,7 @@
     "date-fns": "^2.30.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.1",
     "plaid": "^13.1.0",
     "react": "^18.2.0",
@@ -63,10 +65,12 @@
     ]
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/chroma-js": "^2.4.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.1.3",
     "concurrently": "^8.0.1",
     "css-loader": "^6.8.1",

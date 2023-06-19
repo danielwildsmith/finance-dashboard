@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import { User } from '../models/user';
-const router = express.Router();
+import bcrypt from 'bcrypt';
 
-// TODO: add JWT authentication
+const router = express.Router();
+const saltRounds = 4;
 
 router.post('/signup', async (req : Request, res : Response) => {
     if(!(req.body.username && req.body.password)) {
@@ -17,10 +18,18 @@ router.post('/signup', async (req : Request, res : Response) => {
         return;
     }
 
-    // Add user to DB
-    await User.create({ username: req.body.username, password: req.body.password });
-
-    res.status(200).send("User signed up successfully!");
+    // Add user to DB - hash password
+    try {
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(req.body.password, salt);
+        
+        const user = await User.create({ username: req.body.username, password: hash });
+        res.status(200).send(user);
+        return;
+      } catch (error) {
+        console.error(error);
+        res.status(400).send('Error hashing and salting password.')
+      }
 });
 
 router.post('/signin', async (req : Request, res : Response) => {
@@ -37,12 +46,12 @@ router.post('/signin', async (req : Request, res : Response) => {
     }
 
     // check if incorrect password
-    if(user.getDataValue("password") !== req.body.password) {
-        res.status(401).send( { error: "Incorrect credentials." } );
-        return;
-    }
-
-    res.status(200).send("User signed in successfully");
+    bcrypt.compare(req.body.password, user.getDataValue("password"), (err, result) => {
+        if (result) 
+            res.status(200).send("User signed in successfully");
+        else 
+            res.status(401).send( { error: "Incorrect credentials." } );
+    });
 });
 
 export default router;
