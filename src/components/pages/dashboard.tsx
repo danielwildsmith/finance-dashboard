@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAccountLinked, isLoggedIn } from "./auth";
+import { GetUsername, isAccountLinked, isLoggedIn } from "./auth";
 import { DashboardCards } from "../dashboard-cards";
 import { PageLayout } from "../page-layout";
 
@@ -24,9 +24,9 @@ export const Dashboard = () => {
 
     const Content = () => {
         return (
-            <DashboardCards accountLinked={accountLinked} />
+            <DashboardCards accountLinked={accountLinked || GetUsername() === 'sample'} />
         )
     }
 
-    return <PageLayout page={'Dashboard'} isLinked={accountLinked} ContentComponent={Content} />
+    return <PageLayout page={'Dashboard'} isLinked={accountLinked || GetUsername() === 'sample'} ContentComponent={Content} />
 };

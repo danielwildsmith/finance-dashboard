@@ -96,7 +96,7 @@ const LegendItem = styled('li')({
 
 export const Transactions = () => {
     const date = new Date();
-    const [month, setMonth] = useState(date.getMonth().toString());
+    const [month, setMonth] = useState((date.getMonth() + 1).toString());
     const [year, setYear] = useState(date.getFullYear().toString());
     const [categoryData, setCategoryData] = useState<CategoryData[] | null>(null);
     const [monthlyTotalsData, setMonthlyTotalsData] = useState<MonthlyTotalData[] | null>(null);

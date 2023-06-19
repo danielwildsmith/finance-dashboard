@@ -5,7 +5,7 @@ import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { db, ConnectDB } from './utils/config';
-import { SeedDB } from './utils/seed';
+import { CreateSampleUserData } from './utils/seed';
 
 const app : Express = express();
 const port = process.env.SERVER_PORT || 8000;
@@ -31,5 +31,5 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
-// SeedDB();
+// CreateSampleUserData();
 db.sync();

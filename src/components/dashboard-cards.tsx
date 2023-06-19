@@ -130,7 +130,11 @@ export const DashboardCards = ({accountLinked}: {accountLinked: boolean}) => {
                 <></> :
                 <div style={{ display: 'flex', alignItems: 'flex-end', textAlign: 'center' }}>
                     <Typography variant='body1' sx={{ color: '#707787', width: '100%'}}>
-                            *Data comparisons are monthly, requiring a time period of 30 days to pass after account creation.
+                            {GetUsername() === 'sample' ? 
+                            '*The button above will connect to Plaid on accounts other than this sample one*' 
+                            : '*Data comparisons are monthly, requiring a time period of 30 days to pass after account creation.'
+                            }
+                            
                     </Typography>
                 </div>
             }

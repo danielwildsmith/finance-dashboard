@@ -14,7 +14,7 @@ export const CategorySpendingsGraph = ( { data }: {data: CategoryData[] | null} 
         <BarChart
           data={data}
           margin={{
-            top: 0,
+            top: 20,
             right: 20,
             left: 20,
             bottom: 0,
@@ -40,7 +40,7 @@ export const CategorySpendingsGraph = ( { data }: {data: CategoryData[] | null} 
                 <g>
                   <line x1={Number(x) + Number(width)/2} y1={y} x2={Number(x) + Number(width)/2} y2={Number(y) - 8} stroke="#878fa0" strokeWidth={1} />
                   <text x={Number(x) + Number(width)/2} y={Number(y) - 8} fill={`${COLORS_MAP[CATEGORIES[index++]]}`} textAnchor="middle" dy={-4} fontSize={12}>
-                    {`$${value?.toLocaleString()}`}
+                    {`$${(Number(value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
                   </text>
                 </g>
               )}

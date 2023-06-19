@@ -44,7 +44,7 @@ const renderActiveShape = (props) => {
       />
       <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#f6f7f9">{`$${value}`}</text>
+      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#f6f7f9">{`$${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}</text>
       <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fontSize={13} fill="#707787">{`(${(percent * 100).toFixed(2)}%)`}</text>
     </g>
   );
@@ -76,7 +76,7 @@ export const Totals = ({ data }: { data: TypedBalance[] | null }) => {
                 </Grid>
             <Grid item xs={12} sm={6} lg={3.5} height={'43vh'}>
                 <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                    <PieChart margin={{top: 0, right: 0, left: 70, bottom: 0}}>
                         <Pie
                             activeIndex={index}
                             activeShape={renderActiveShape}

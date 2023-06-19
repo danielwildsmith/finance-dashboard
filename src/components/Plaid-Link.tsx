@@ -71,7 +71,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
   const { open, ready } = usePlaidLink(config);
   return (
     <Button 
-      onClick={() => open()} disabled={!ready}
+      onClick={props.username === 'sample' ? () => null : () => open()} disabled={!ready}
       sx={{
         backgroundColor: 'black', color: '#f6f7f9', border: 'none', padding: 1.5, paddingRight: 10, paddingLeft: 10, borderRadius: 5,
         ':hover': { backgroundColor: '#1a1e24', color: '#139eca'}

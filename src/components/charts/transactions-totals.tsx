@@ -59,9 +59,8 @@ export const MonthlyTotalGraph = ({ data }: { data: MonthlyTotalData[] | null })
                     <g>
                       <line x1={Number(x) + Number(width)} y1={Number(y) + Number(height) / 2} x2={Number(x) + Number(width) + 8} y2={Number(y) + Number(height) / 2} stroke="#878fa0" strokeWidth={1} />
                       <text x={Number(x) + Number(width) + 32} y={Number(y) + Number(height) / 2} fill={'#878fa0'} textAnchor="middle" dy={+4} fontSize={12}>
-  {`$${value?.toLocaleString()}`}
-</text>
-
+                      {`$${(Number(value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
+                      </text>
                     </g>
                   )}
                 /> : null}
