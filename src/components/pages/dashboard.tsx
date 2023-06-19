@@ -10,11 +10,11 @@ export const Dashboard = () => {
     
     // execute only on mount: if user is not logged in redirect to signin
     useEffect(() => {
-        const authenticate = async () => {
+        const authenticate = () => {
             if (!isLoggedIn()) {
               navigate('/');
             } else {
-                const linked = await isAccountLinked();
+                const linked = isAccountLinked();
                 setAccountLinked(linked);
             }
         };

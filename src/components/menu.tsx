@@ -119,6 +119,7 @@ export default function MiniDrawer( { page, isLinked }: { page: string, isLinked
 
   const handleLogOut = () => {
     document.cookie = 'username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'isAccountLinked=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     navigate('/')
   }
 

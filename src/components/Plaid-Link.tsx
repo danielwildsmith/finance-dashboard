@@ -52,6 +52,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
               console.log('Balance seeding: success');
               const isSuccess = responses.every((response) => response.status === 200);
               if (isSuccess) 
+                document.cookie = 'isAccountLinked=true' + '; path=/; SameSite=Lax';
                 window.location.reload();
             })
             .catch((error) => {

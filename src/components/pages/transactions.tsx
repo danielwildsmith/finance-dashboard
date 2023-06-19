@@ -152,25 +152,25 @@ export const Transactions = () => {
 
     // if user is not logged in redirect to signin. when signed in, execute each time month/year is changed
     useEffect(() => {
-        const authenticate = async () => {
+        const authenticate = () => {
             if (!isLoggedIn()) {
               navigate('/');
             } else {
-                const linked = await isAccountLinked();
+                const linked = isAccountLinked();
                 setAccountLinked(linked);
                 if(!linked)
                     navigate('/dashboard');
             }
         };
 
-            const fetchData = async () => {
-                await getCategoryData();
-                await getMonthlyTotalsData();
-                await getTransactionRows();
-              };
+        const fetchData = async () => {
+            await getCategoryData();
+            await getMonthlyTotalsData();
+            await getTransactionRows();
+          };
 
-              authenticate();
-            fetchData();
+        authenticate();
+        fetchData();
     }, [year, month]);
 
     const DateSelectionBox = ({ title, options }: {title: string, options: string[] }) => {

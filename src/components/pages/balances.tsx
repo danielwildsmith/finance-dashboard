@@ -45,11 +45,11 @@ export const Balances = () => {
     };
 
     useEffect(() => {
-        const authenticate = async () => {
+        const authenticate = () => {
             if (!isLoggedIn()) {
               navigate('/');
             } else {
-                const linked = await isAccountLinked();
+                const linked = isAccountLinked();
                 setAccountLinked(linked);
                 if(!linked)
                     navigate('/dashboard');
