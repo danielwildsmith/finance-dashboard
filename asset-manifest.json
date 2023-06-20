@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/finance-dashboard/static/js/main.0a03fefe.js",
+    "index.html": "/finance-dashboard/index.html",
+    "main.0a03fefe.js.map": "/finance-dashboard/static/js/main.0a03fefe.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.0a03fefe.js"
+  ]
+}
