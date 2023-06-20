@@ -1,6 +1,7 @@
 {
   "name": "finance-dashboard",
   "version": "0.1.0",
+  "homepage": "https://danielwildsmith.github.io/finance-dashboard",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -39,6 +40,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -74,6 +77,7 @@
     "@types/node": "^20.1.3",
     "concurrently": "^8.0.1",
     "css-loader": "^6.8.1",
+    "gh-pages": "^5.0.0",
     "nodemon": "^2.0.22",
     "typescript": "^5.0.4"
   }
