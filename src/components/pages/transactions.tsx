@@ -224,18 +224,26 @@ export const Transactions = () => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={12} lg={2.5} height={'33vh'}>
-                        <Typography variant='h6' noWrap sx={{color: '#878fa0', width: 'fit-content'}}>Distribution</Typography>
-                        <CategoryDistributionChart data={categoryData} />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={6} height={'33vh'}>
-                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Spendings</Typography>
-                        <CategorySpendingsGraph data={categoryData} />
-                    </Grid>
-                    <Grid item xs={12} sm={12} lg={3.5} height={'33vh'}>
-                        <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Monthly Totals</Typography>
-                        <MonthlyTotalGraph data={monthlyTotalsData} />
-                    </Grid>
+                    {categoryData?.length === 0 ? 
+                    <Typography variant='h6' sx={{color: '#878fa0', height: '33vh', width: '100%', display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                        Uh Oh... No data could be found for this month/year.
+                    </Typography>
+                    : 
+                    <>
+                        <Grid item xs={12} sm={12} lg={2.5} height={'33vh'}>
+                            <Typography variant='h6' noWrap sx={{color: '#878fa0', width: 'fit-content'}}>Distribution</Typography>
+                            <CategoryDistributionChart data={categoryData} />
+                        </Grid>
+                        <Grid item xs={12} sm={12} lg={6} height={'33vh'}>
+                            <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Spendings</Typography>
+                            <CategorySpendingsGraph data={categoryData} />
+                        </Grid>
+                        <Grid item xs={12} sm={12} lg={3.5} height={'33vh'}>
+                            <Typography variant='h6' noWrap sx={{color: '#878fa0'}}>Monthly Totals</Typography>
+                            <MonthlyTotalGraph data={monthlyTotalsData} />
+                        </Grid>
+                    </>
+                    }
                 </Grid>
 
                 <CustomLegend />

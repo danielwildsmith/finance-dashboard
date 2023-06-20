@@ -45,8 +45,11 @@ export const isLoggedIn = () => {
         document.cookie = 'isAccountLinked=true' + '; path=/; SameSite=Lax';
       else 
         document.cookie = 'isAccountLinked=false' + '; path=/; SameSite=Lax';
+  
+      return Promise.resolve(); // Resolve the promise after creating the cookie
     } catch (error) {
       console.error(error);
+      return Promise.reject(error); // Reject the promise if an error occurs
     }
   };  
 
@@ -97,10 +100,11 @@ export const AuthForm = ( {type}: {type: string}) => {
             setMessage('Success!');
             const createCookies = async () => {
               document.cookie = 'username=' + req.username + '; path=/; SameSite=Lax';
-              await CreateAccountLinkedCookie();
+              const resp = await CreateAccountLinkedCookie();
+
+              navigate('/dashboard');
             }
             createCookies();
-            navigate('/dashboard');
         })
         .catch(error => {
             if (error.response)

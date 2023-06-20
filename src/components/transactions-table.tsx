@@ -103,7 +103,7 @@ export const BasicEditingGrid = ( { data }: { data: TransactionRow[] | null } ) 
 const columns: GridColDef[] = [
     { field: 'date', headerName: 'Date', editable: false },
     { field: 'name', headerName: 'Name', flex: 0.70, minWidth: 180, editable: false },
-    { field: 'amount', headerName: 'Amount', type: 'number', editable: false, sortComparator: amountComparator, valueGetter: (params: GridValueGetterParams) => `$${params.row.amount}` },
+    { field: 'amount', headerName: 'Amount', type: 'number', editable: false, sortComparator: amountComparator, valueGetter: (params: GridValueGetterParams) => `$${(params.row.amount).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2})}` },
     { field: 'category', headerName: 'Category', flex: 0.3, minWidth: 130, editable: false },
     { field: 'note', headerName: 'Note', flex: 0.6, minWidth: 220, editable: true },
     { field: 'verified', headerName: 'Verified', type: 'boolean', sortable: false, filterable: false, editable: true, cellClassName: 'grid-verified' }

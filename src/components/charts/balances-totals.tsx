@@ -70,13 +70,13 @@ export const Totals = ({ data }: { data: TypedBalance[] | null }) => {
   if(data) {
     return (
         <Grid container spacing={0} justifyContent={'center'}>
-            <Grid item xs={12} sm={6} lg={3.5} height={'43vh'} sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            <Grid item xs={12} sm={6} lg={6} height={'43vh'} sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
                     <Typography variant="h4" sx={{textAlign: 'center', color: '#878fa0', textDecoration: 'underline'}}><strong>Total Net Worth</strong></Typography>
                     <Typography variant="h4" sx={{textAlign: 'center', color: '#139eca'}}>{getCurrentNetWorth()}</Typography>
                 </Grid>
-            <Grid item xs={12} sm={6} lg={3.5} height={'43vh'}>
+            <Grid item xs={12} sm={6} lg={6} height={'43vh'}>
                 <ResponsiveContainer width="100%" height="100%">
-                    <PieChart margin={{top: 0, right: 0, left: 70, bottom: 0}}>
+                    <PieChart>
                         <Pie
                             activeIndex={index}
                             activeShape={renderActiveShape}

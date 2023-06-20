@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DatedNetWorth } from '../pages/balances';
 import { Typography } from '@mui/material';
 
@@ -29,7 +29,7 @@ export const NetWorthTimeGraph = ({ data }: { data: DatedNetWorth[] | null }) =>
               >
                 <CartesianGrid strokeDasharray="none" stroke="#878fa0"  />
                 <XAxis dataKey="date" stroke="#878fa0" />
-                <YAxis tickFormatter={CustomYAxisFormatter} stroke="#878fa0"  />
+                <YAxis tickFormatter={CustomYAxisFormatter} stroke="#878fa0" domain={['auto', 'dataMax']} />
                 <Tooltip formatter={CustomOnHoverFormatter}/>
                 <Line type="monotone" dataKey="Total" stroke="#139eca" />
               </LineChart>
