@@ -24,7 +24,7 @@ root.render(
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </HashRouter> 
-  </>
+  </> 
 );
 
 /*
