@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthForm } from './components/pages/auth';
 import { Dashboard } from './components/pages/dashboard';
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(rootElement!);
 root.render(
   <>
     <CssBaseline />
-    <Router>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<AuthForm type={'signin'} />} />
         <Route path="/signup" element={<AuthForm type={'signup'} />} />
@@ -23,7 +23,7 @@ root.render(
         <Route path="/balances" element={<Balances />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
-    </Router> 
+    </HashRouter> 
   </>
 );
 
