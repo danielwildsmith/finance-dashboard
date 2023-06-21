@@ -199,7 +199,7 @@ export const AuthForm = ( {type}: {type: string}) => {
               <Grid container>
                 {type === 'signup' ? null
                 : <Grid item>
-                    <Link onClick={() => navigate(`/signup`)} variant="body2"> {"Create Account"} </Link>
+                    <Link onClick={() => navigate(`/signup`)} variant="body2" sx={{cursor: 'pointer'}}> {"Create Account"} </Link>
                   </Grid>
                 }
               </Grid>
