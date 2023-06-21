@@ -17,8 +17,8 @@ router.post('/create', async (request : Request, response : Response) => {
     // @ts-ignore
     products: ['transactions'],
     language: 'en',
-    webhook: 'https://webhook.example.com',
-    redirect_uri: 'http://localhost:3000',
+    webhook: 'https://danielwildsmith.github.io/finance-dashboard/#/dashboard',
+    redirect_uri: 'https://danielwildsmith.github.io/finance-dashboard/',
     // @ts-ignore
     country_codes: ['US'],
   };

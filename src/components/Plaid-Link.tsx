@@ -9,7 +9,7 @@ import axios from 'axios';
 const App = ({username, accountLinked}: {username: string, accountLinked: boolean}) => {
   const [linkToken, setLinkToken] = useState(null);
   const generateToken = async () => {
-    const response = await fetch('/api/user-tokens/create', {
+    const response = await fetch('http://localhost:8000/api/user-tokens/create', {
       method: 'POST',
     });
     const data = await response.json();
@@ -35,14 +35,14 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
     const onSuccess = React.useCallback((public_token, metadata) => {
       const tokenReq = { public_token: public_token };
       axios
-        .post(`/api/user-tokens/set/${props.username}`, tokenReq)
+        .post(`http://localhost:8000/api/user-tokens/set/${props.username}`, tokenReq)
         .then((res) => {
           const req = { access_token: res.data };
     
           // Create an array of axios requests
           const requests = [
-            axios.post(`/api/transactions/${props.username}`, req),
-            axios.post(`/api/balances/${props.username}`, req),
+            axios.post(`http://localhost:8000/api/transactions/${props.username}`, req),
+            axios.post(`http://localhost:8000/api/balances/${props.username}`, req),
           ];
     
           // Wait for all requests to resolve
