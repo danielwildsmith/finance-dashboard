@@ -199,7 +199,7 @@ export const AuthForm = ( {type}: {type: string}) => {
               <Grid container>
                 {type === 'signup' ? null
                 : <Grid item>
-                    <Link href="/signup" variant="body2"> {"Create Account"} </Link>
+                    <Link href="/#/signup" variant="body2"> {"Create Account"} </Link>
                   </Grid>
                 }
               </Grid>

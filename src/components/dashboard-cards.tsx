@@ -43,7 +43,7 @@ const DashboardCard = ({type}: {type: string}) => {
             const percentageChange = ((data.recentAmount - data.previousAmount) / Math.abs(data.previousAmount)) * 100;
             const roundedPercentageChange = Number(percentageChange.toFixed(0));
 
-            if(data.recentAmount >= data.previousAmount) {
+            if(roundedPercentageChange >= 0) {
                 return (
                     <div style={{display: 'flex', gap: 4, marginTop: 12, paddingBottom: 12, borderBottom: '1px solid #444c5d', justifyContent: 'center', alignItems: 'center'}}>
                         <NorthOutlined sx={{color: '#1ebd1e', fontSize: 28}} />
@@ -54,8 +54,8 @@ const DashboardCard = ({type}: {type: string}) => {
             else {
                 return (
                     <div style={{display: 'flex', gap: 4, marginTop: 12, paddingBottom: 12, borderBottom: '1px solid #444c5d', justifyContent: 'center', alignItems: 'center'}}>
-                        <SouthOutlined sx={{color: '#1ebd1e', fontSize: 28}} />
-                        <Typography variant='h6' sx={{color: '#1ebd1e'}}>{roundedPercentageChange}%</Typography>
+                        <SouthOutlined sx={{color: '#d12631', fontSize: 28}} />
+                        <Typography variant='h6' sx={{color: '#d12631'}}>{roundedPercentageChange}%</Typography>
                     </div>
                 )
             }   

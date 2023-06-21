@@ -174,7 +174,7 @@ export default function MiniDrawer( { page, isLinked }: { page: string, isLinked
           {getOptions().map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block', 
              color: page === (text.charAt(0).toUpperCase() + text.slice(1)) ? '#139eca' : '#f6f7f9' }} 
-             component="a" href={`/${text.toLowerCase()}`}
+             component="a" href={`/#/${text.toLowerCase()}`}
             >
               <ListItemButton
                 sx={{
