@@ -6,9 +6,9 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { db, ConnectDB } from './utils/config';
 import { CreateSampleUserData } from './utils/seed';
+import * as functions from 'firebase-functions';
 
 const app : Express = express();
-const port = process.env.SERVER_PORT || 8000;
 
 ConnectDB();
 
@@ -32,9 +32,11 @@ app.use((req, res, next) => {
 
 app.use('/api', apiRoute);
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+app.listen(() => {
+  console.log(`[server]: Server is running at http://localhost:${8000}`);
 });
 
 // CreateSampleUserData();
 db.sync();
+
+exports.api = functions.https.onRequest(app);

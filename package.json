@@ -18,6 +18,8 @@
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
@@ -26,7 +28,13 @@
     "cookie-session": "^2.0.0",
     "date-fns": "^2.30.0",
     "dotenv": "^16.0.3",
+    "eslint": "^8.43.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.27.5",
     "express": "^4.18.2",
+    "firebase-admin": "^11.9.0",
+    "firebase-functions": "^4.4.1",
+    "firebase-functions-test": "^3.1.0",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.1",
     "plaid": "^13.1.0",
@@ -46,8 +54,16 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server/server.js\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server/server.js\"",
+    "build-ts": "tsc",
+    "fb-serve": "npm run build-ts && firebase emulators:start --only functions:api",
+    "fb-deploy": "firebase deploy --only functions",
+    "lint": "eslint --ext .js,.ts ."
   },
+  "engines": {
+    "node": "16"
+  },
+  "main": "dist/server/server.js",
   "proxy": "http://localhost:8000/",
   "eslintConfig": {
     "extends": [
