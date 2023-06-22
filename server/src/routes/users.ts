@@ -52,7 +52,7 @@ router.post("/signin", async (req: Request, res: Response) => {
   bcrypt.compare(
     req.body.password,
     user.getDataValue("password"),
-    (err, result) => {
+    (_, result) => {
       if (result) {
         res.status(200).send("User signed in successfully");
       } else {

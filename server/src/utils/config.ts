@@ -14,7 +14,6 @@ const configPlaid = new Configuration({
 export const plaidClient = new PlaidApi(configPlaid);
 
 // Configure MySQL database hosted on PlanetScale
-// @ts-ignore
 export const db = new Sequelize(
   process.env.DB_NAME as string,
   process.env.DB_USERNAME as string,

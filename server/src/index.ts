@@ -1,11 +1,10 @@
-import express, { Express, Request, Response } from 'express';
+import express, {Express} from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 import { db, ConnectDB } from './utils/config';
-import { CreateSampleUserData } from './utils/seed';
+// import { CreateSampleUserData } from './utils/seed';
 import * as functions from 'firebase-functions';
 
 const app : Express = express();
@@ -15,7 +14,6 @@ ConnectDB();
 // init middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use((req, res, next) => {
   const allowedOrigins = ['http://localhost:3000', 'https://danielwildsmith.github.io'];  
   const origin = req.headers.origin;
@@ -29,12 +27,16 @@ app.use((req, res, next) => {
   next() // Pass control to the next middleware or route handler
 });
 
-
-app.use('/api', apiRoute);
-
-app.listen(() => {
-  console.log(`[server]: Server is running at http://localhost:${process.env.SERVER_PORT || 8000}`);
-});
+if(process.env.NODE_ENV == "development") {
+  app.use('/api', apiRoute);
+  const port = 8000;
+  app.listen(port, () => {
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+  });
+}
+else if(process.env.NODE_ENV == "production") {
+  app.use('/', apiRoute);
+}
 
 // CreateSampleUserData();
 db.sync();

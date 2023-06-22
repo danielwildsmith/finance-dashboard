@@ -4,8 +4,55 @@ import {TransactionsGetRequest} from "plaid";
 import {format} from "date-fns";
 import {Transaction} from "../models/transaction";
 import {Op, Model} from "sequelize";
-import {CATEGORIES, CategoryData, MonthlyTotalData, TransactionRow} from "../../src/components/pages/transactions";
-import {MonthlyAmountComparison} from "../../src/components/dashboard-cards";
+
+interface CategoryData {
+  category: string;
+  month: string;
+  previous_month: string;
+  amount: number;
+  previous_month_amount: number;
+}
+
+interface MonthlyTotalData {
+  month: string;
+  "Food And Drink": number;
+  "General Merchandise": number;
+  Transportation: number;
+  "Rent And Utilities": number;
+  Travel: number;
+  "Transfer Out": number;
+  "General Services": number;
+  Other: number;
+  total: number;
+  [key: string]: number | string;
+}
+
+interface TransactionRow {
+  id: string;
+  date: string;
+  name: string;
+  category: string;
+  amount: number;
+  note: string;
+  verified: boolean;
+}
+
+const CATEGORIES = [
+  "Food And Drink",
+  "General Merchandise",
+  "Transportation",
+  "Rent And Utilities",
+  "Travel",
+  "Transfer Out",
+  "General Services",
+  "Other",
+];
+
+interface MonthlyAmountComparison {
+  recentAmount: number;
+  previousAmount: number;
+  available: boolean;
+}
 
 const router = express.Router();
 

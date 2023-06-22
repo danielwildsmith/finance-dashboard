@@ -201,7 +201,7 @@ export const UpdateUserData = async () => {
         `http://localhost:8000/api/transactions/${user_tokens[i].dataValues.username}`,
         req
       )
-      .then((res) => {
+      .then((_) => {
         console.log("Success");
       })
       .catch((error) => {
@@ -213,7 +213,7 @@ export const UpdateUserData = async () => {
         `http://localhost:8000/api/balances/${user_tokens[i].dataValues.username}`,
         req
       )
-      .then((res) => {
+      .then((_) => {
         console.log("Success");
       })
       .catch((error) => {

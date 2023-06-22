@@ -3,12 +3,22 @@ import {plaidClient} from "../utils/config";
 import {AccountsBalanceGetRequest} from "plaid";
 import {Balance} from "../models/balance";
 import {format} from "date-fns";
-import {
-  DatedNetWorth,
-  TypedBalance,
-} from "../../src/components/pages/balances";
-import {Op} from "sequelize";
-import {MonthlyAmountComparison} from "../../src/components/dashboard-cards";
+
+interface TypedBalance {
+  type: string;
+  total: number;
+}
+
+interface DatedNetWorth {
+  date: string;
+  Total: number;
+}
+
+interface MonthlyAmountComparison {
+  recentAmount: number;
+  previousAmount: number;
+  available: boolean;
+}
 
 const router = express.Router();
 

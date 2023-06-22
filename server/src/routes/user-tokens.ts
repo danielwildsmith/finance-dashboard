@@ -4,14 +4,12 @@ import {LinkTokenCreateRequest} from "plaid";
 import {plaidClient} from "../utils/config";
 import {UserToken} from "../models/user-token";
 
-router.post("/create", async (request: Request, response: Response) => {
-  // Get the client_user_id by searching for the current user
-  // const user = await User.find(...);
-  // const clientUserId = user.id;
+router.post("/create/:username", async (request : Request, response: Response) => {
+  const username = request.params.username;
   const plaidReq: LinkTokenCreateRequest = {
     user: {
       // This should correspond to a unique id for the current user. (1 for now just testing)
-      client_user_id: "1",
+      client_user_id: username as string,
     },
     client_name: "Plaid Test App",
     // @ts-ignore
@@ -44,7 +42,6 @@ router.post("/set/:username", async (request: Request, response: Response) => {
     // These values should be saved to a persistent database and
     // associated with the currently signed-in user
     const accessToken = exchange_response.data.access_token;
-    const itemID = exchange_response.data.item_id;
 
     await UserToken.create({access_token: accessToken, username: username});
 
