@@ -53,7 +53,7 @@ export const BasicEditingGrid = ({
     if (newRow.note !== oldRow.note) {
       try {
         const response = await axios.put(
-          `http://localhost:8000/api/transactions/note/${newRow.id}`,
+          `${process.env.REACT_APP_API_URL}/api/transactions/note/${newRow.id}`,
           {note: newRow.note, category: newRow.category}
         );
         setSnackbar({
@@ -67,7 +67,7 @@ export const BasicEditingGrid = ({
     } else if (newRow.verified !== oldRow.verified) {
       try {
         const response = await axios.put(
-          `http://localhost:8000/api/transactions/verify/${newRow.id}`,
+          `${process.env.REACT_APP_API_URL}/api/transactions/verify/${newRow.id}`,
           {verified: newRow.verified}
         );
 

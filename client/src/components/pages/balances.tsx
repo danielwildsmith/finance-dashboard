@@ -30,7 +30,7 @@ export const Balances = () => {
 
   const getCurrentBalances = () => {
     axios
-      .get(`http://localhost:8000/api/balances/current/${getUsername()}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/balances/current/${getUsername()}`)
       .then((res) => {
         setCurrentBalances(res.data);
       })
@@ -41,7 +41,7 @@ export const Balances = () => {
 
   const getRecentNetWorthData = () => {
     axios
-      .get(`http://localhost:8000/api/balances/history/${getUsername()}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/balances/history/${getUsername()}`)
       .then((res) => {
         setRecentNetWorthData(res.data);
       })

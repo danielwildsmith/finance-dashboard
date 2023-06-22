@@ -15,7 +15,7 @@ export const Dashboard = () => {
     const checkAccountLinkedStatus = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/user-tokens/${getUsername()}`
+          `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`
         );
         const isLinked = res.data > 0;
         setAccountLinked(isLinked);

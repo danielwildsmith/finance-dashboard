@@ -30,7 +30,7 @@ const DashboardCard = ({type}: { type: string }) => {
 
   const getData = () => {
     axios
-      .get(`http://localhost:8000/api/${type}/comparison/${getUsername()}/`)
+      .get(`${process.env.REACT_APP_API_URL}/api/${type}/comparison/${getUsername()}/`)
       .then((res) => {
         setData(res.data);
       })

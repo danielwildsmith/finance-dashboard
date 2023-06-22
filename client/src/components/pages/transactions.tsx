@@ -147,7 +147,7 @@ export const Transactions = () => {
   const getCategoryData = () => {
     axios
       .get(
-        `http://localhost:8000/api/transactions/categorized/${getUsername()}/${year}/${formattedMonth}`
+        `${process.env.REACT_APP_API_URL}/api/transactions/categorized/${getUsername()}/${year}/${formattedMonth}`
       )
       .then((res) => {
         setCategoryData(res.data);
@@ -160,7 +160,7 @@ export const Transactions = () => {
   const getMonthlyTotalsData = () => {
     axios
       .get(
-        `http://localhost:8000/api/transactions/totals/${getUsername()}/${year}/${formattedMonth}`
+        `${process.env.REACT_APP_API_URL}/api/transactions/totals/${getUsername()}/${year}/${formattedMonth}`
       )
       .then((res) => {
         setMonthlyTotalsData(res.data);
@@ -173,7 +173,7 @@ export const Transactions = () => {
   const getTransactionRows = () => {
     axios
       .get(
-        `http://localhost:8000/api/transactions/${getUsername()}/${year}/${formattedMonth}`
+        `${process.env.REACT_APP_API_URL}/api/transactions/${getUsername()}/${year}/${formattedMonth}`
       )
       .then((res) => {
         setTransactionRows(res.data);

@@ -16,7 +16,7 @@ const App = ({
   const [linkToken, setLinkToken] = useState(null);
   const generateToken = async () => {
     const response = await fetch(
-      `http://localhost:8000/api/user-tokens/create/${username}`,
+      `${process.env.REACT_APP_API_URL}/api/user-tokens/create/${username}`,
       {
         method: "POST",
       }
@@ -53,7 +53,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
     const tokenReq = {public_token: public_token};
     axios
       .post(
-        `http://localhost:8000/api/user-tokens/set/${props.username}`,
+        `${process.env.REACT_APP_API_URL}/api/user-tokens/set/${props.username}`,
         tokenReq
       )
       .then((res) => {
@@ -62,11 +62,11 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
         // Create an array of axios requests
         const requests = [
           axios.post(
-            `http://localhost:8000/api/transactions/${props.username}`,
+            `${process.env.REACT_APP_API_URL}/api/transactions/${props.username}`,
             req
           ),
           axios.post(
-            `http://localhost:8000/api/balances/${props.username}`,
+            `${process.env.REACT_APP_API_URL}/api/balances/${props.username}`,
             req
           ),
         ];

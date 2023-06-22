@@ -41,4 +41,13 @@ else if(process.env.NODE_ENV == "production") {
 // CreateSampleUserData();
 db.sync();
 
-exports.api = functions.https.onRequest(app);
+exports.api = functions.https.onRequest((req, res) => {
+  // Set the CORS headers manually
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.set('Access-Control-Allow-Credentials', 'true');
+
+  // Forward the request to the Express app
+  app(req, res);
+});
