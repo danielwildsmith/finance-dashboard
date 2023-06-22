@@ -28,5 +28,7 @@ module.exports = {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "max-len": ["error", { "code": 80, "tabWidth": 2, "comments": 80, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true, "ignoreTrailingComments": true, "ignorePattern": "^\\s*var\\s.+=\\s*require\\s*\\(" }], 
+    "new-cap": ["error", { "capIsNewExceptions": [] }],   
   },
 };

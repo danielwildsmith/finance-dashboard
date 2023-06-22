@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 app.use('/api', apiRoute);
 
 app.listen(() => {
-  console.log(`[server]: Server is running at http://localhost:${8000}`);
+  console.log(`[server]: Server is running at http://localhost:${process.env.SERVER_PORT || 8000}`);
 });
 
 // CreateSampleUserData();
