@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {usePlaidLink} from "react-plaid-link";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { getIDToken } from "./pages/auth";
 
 const App = ({
   username,
@@ -14,24 +15,39 @@ const App = ({
   accountLinked: boolean;
 }) => {
   const [linkToken, setLinkToken] = useState(null);
-  const generateToken = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/user-tokens/create/${username}`,
-      {
-        method: "POST",
-      }
-    );
-    const data = await response.json();
-    setLinkToken(data.link_token);
-  };
+  const [idToken, setIDToken] = useState(null);
+
   useEffect(() => {
+    const generateToken = async () => {
+      try {
+        const token = await getIDToken();
+        setIDToken(token);
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/user-tokens/create/${username}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setLinkToken(data.link_token);
+      }
+      catch(error) {
+        console.error(error);
+      }
+    };
+
     generateToken();
   }, []);
+
   return linkToken != null ? (
     <Link
       linkToken={linkToken}
       username={username}
       accountLinked={accountLinked}
+      idToken={idToken}
     />
   ) : (
     <></>
@@ -45,6 +61,7 @@ interface LinkProps {
   linkToken: string | null;
   username: string;
   accountLinked: boolean;
+  idToken: any;
 }
 
 const Link: React.FC<LinkProps> = (props: LinkProps) => {
@@ -54,7 +71,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
     axios
       .post(
         `${process.env.REACT_APP_API_URL}/api/user-tokens/set/${props.username}`,
-        tokenReq
+        tokenReq, { headers: {"Authorization" : `Bearer ${props.idToken}`} }
       )
       .then((res) => {
         const req = {access_token: res.data};
@@ -63,11 +80,11 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
         const requests = [
           axios.post(
             `${process.env.REACT_APP_API_URL}/api/transactions/${props.username}`,
-            req
+            req, { headers: {"Authorization" : `Bearer ${props.idToken}`} }
           ),
           axios.post(
             `${process.env.REACT_APP_API_URL}/api/balances/${props.username}`,
-            req
+            req, { headers: {"Authorization" : `Bearer ${props.idToken}`} }
           ),
         ];
 

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import axios from "axios";
-import {getUsername} from "./pages/auth";
+import {getIDToken, getUsername} from "./pages/auth";
 import {NorthOutlined, SouthOutlined, CreditCard} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import PlaidLink from "./Plaid-Link";
@@ -28,9 +28,9 @@ const DashboardCard = ({type}: { type: string }) => {
   const heading = type === "balances" ? "Net Worth" : "Transactions";
   const navigate = useNavigate();
 
-  const getData = () => {
+  const getData = (idToken: any) => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/${type}/comparison/${getUsername()}/`)
+      .get(`${process.env.REACT_APP_API_URL}/api/${type}/comparison/${getUsername()}/`, { headers: {"Authorization" : `Bearer ${idToken}`} })
       .then((res) => {
         setData(res.data);
       })
@@ -41,7 +41,8 @@ const DashboardCard = ({type}: { type: string }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getData();
+      const idToken = await getIDToken();
+      await getData(idToken);
     };
 
     fetchData();

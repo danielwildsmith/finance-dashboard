@@ -18,6 +18,21 @@ interface User {
   password: string;
 }
 
+export const getIDToken = async () => {
+  const reqBody = {
+    "email": `${process.env.REACT_APP_EMAIL}`,
+    "password": `${process.env.REACT_APP_PW}`,
+    "returnSecureToken": true
+  }
+  try {
+    const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`, reqBody);
+    return res.data.idToken;
+  }
+  catch(error) {
+    return '';
+  }
+}
+
 export const isLoggedIn = () => {
   const cookies = document.cookie.split(";");
 
@@ -40,8 +55,9 @@ export const getUsername = (): string => {
 
 export const CreateAccountLinkedCookie = async () => {
   try {
+    const idToken = await getIDToken();
     const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`
+      `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
     );
     if (res.data > 0) {
       document.cookie = "isAccountLinked=true" + "; path=/; SameSite=Lax";
@@ -85,7 +101,7 @@ export const AuthForm = ({type}: { type: string }) => {
     }
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
@@ -94,13 +110,9 @@ export const AuthForm = ({type}: { type: string }) => {
       password: data.get("password") as string,
     };
 
-    const config = {
-      headers: {"Content-Type": "application/json"},
-      withCredentials: true,
-    };
-
+    const idToken = await getIDToken();
     axios
-      .post(`${process.env.REACT_APP_API_URL}/api/users/${type}`, req, config)
+      .post(`${process.env.REACT_APP_API_URL}/api/users/${type}`, req, { headers: {"Authorization" : `Bearer ${idToken}`} })
       .then((res) => {
         setStatus("success");
         setMessage("Success!");
