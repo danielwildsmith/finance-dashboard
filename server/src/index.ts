@@ -1,3 +1,5 @@
+import admin from 'firebase-admin';
+admin.initializeApp();
 import express, {Express} from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -6,12 +8,21 @@ import bodyParser from 'body-parser';
 import { db, ConnectDB } from './utils/config';
 // import { CreateSampleUserData } from './utils/seed';
 import * as functions from 'firebase-functions';
+import { validateFirebaseIdToken } from './utils/auth';
 
 const app : Express = express();
 
 ConnectDB();
 
 // init middleware
+// Apply the validateFirebaseIdToken middleware to all routes except '/signin'
+app.use((req, res, next) => {
+  if (req.path !== '/api/users/token' && process.env.NODE_ENV == 'production') {
+    validateFirebaseIdToken(req, res, next);
+  } else {
+    next();
+  }
+});
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -22,9 +33,15 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', origin as string);
   }
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization'); 
   res.header('Access-Control-Allow-Credentials', 'true');
-  next() // Pass control to the next middleware or route handler
+  if (req.method === 'OPTIONS') {
+    // Handle preflight request
+    res.status(200).end();
+  } else {
+    // Pass control to the next middleware or route handler
+    next();
+  }
 });
 
 if(process.env.NODE_ENV == "development") {
@@ -43,11 +60,22 @@ db.sync();
 
 exports.api = functions.https.onRequest((req, res) => {
   // Set the CORS headers manually
+  const allowedOrigins = ['http://localhost:3000', 'https://danielwildsmith.github.io'];  
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin as string)) {
+    res.header('Access-Control-Allow-Origin', origin as string);
+  }
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.set('Access-Control-Allow-Credentials', 'true');
 
+  // Handle the preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).send();
+    return;
+  }
   // Forward the request to the Express app
   app(req, res);
 });
