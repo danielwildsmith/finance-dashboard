@@ -18,21 +18,6 @@ interface User {
   password: string;
 }
 
-export const getIDToken = async () => {
-  const reqBody = {
-    "email": `${process.env.REACT_APP_EMAIL}`,
-    "password": `${process.env.REACT_APP_PW}`,
-    "returnSecureToken": true
-  }
-  try {
-    const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_API_KEY}`, reqBody);
-    return res.data.idToken;
-  }
-  catch(error) {
-    return '';
-  }
-}
-
 export const isLoggedIn = () => {
   const cookies = document.cookie.split(";");
 
@@ -53,11 +38,17 @@ export const getUsername = (): string => {
   return match ? match[1] : "";
 };
 
+export const getJWT = (): string => {
+  const cookieString = document.cookie;
+  const match = cookieString.match(/token=([^;]+)/);
+
+  return match ? match[1] : "";
+}
+
 export const CreateAccountLinkedCookie = async () => {
   try {
-    const idToken = await getIDToken();
     const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
+      `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
     );
     if (res.data > 0) {
       document.cookie = "isAccountLinked=true" + "; path=/; SameSite=Lax";
@@ -110,16 +101,17 @@ export const AuthForm = ({type}: { type: string }) => {
       password: data.get("password") as string,
     };
 
-    const idToken = await getIDToken();
     axios
-      .post(`${process.env.REACT_APP_API_URL}/api/users/${type}`, req, { headers: {"Authorization" : `Bearer ${idToken}`} })
+      .post(`${process.env.REACT_APP_API_URL}/api/users/${type}`, req)
       .then((res) => {
         setStatus("success");
         setMessage("Success!");
         const createCookies = async () => {
           document.cookie =
             "username=" + req.username + "; path=/; SameSite=Lax";
-          const resp = await CreateAccountLinkedCookie();
+          document.cookie =
+          "token=" + res.data + "; path=/; SameSite=Lax";
+          await CreateAccountLinkedCookie();
 
           navigate("/dashboard");
         };

@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {usePlaidLink} from "react-plaid-link";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import { getIDToken } from "./pages/auth";
+import { getJWT } from "./pages/auth";
 
 const App = ({
   username,
@@ -15,19 +15,16 @@ const App = ({
   accountLinked: boolean;
 }) => {
   const [linkToken, setLinkToken] = useState(null);
-  const [idToken, setIDToken] = useState(null);
 
   useEffect(() => {
     const generateToken = async () => {
       try {
-        const token = await getIDToken();
-        setIDToken(token);
         const res = await fetch(
           `${process.env.REACT_APP_API_URL}/api/user-tokens/create/${username}`,
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${getJWT()}`,
             },
           }
         );
@@ -47,7 +44,7 @@ const App = ({
       linkToken={linkToken}
       username={username}
       accountLinked={accountLinked}
-      idToken={idToken}
+      idToken={getJWT()}
     />
   ) : (
     <></>

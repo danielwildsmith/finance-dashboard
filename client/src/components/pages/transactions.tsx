@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {isAccountLinked, isLoggedIn, getUsername, getIDToken} from "./auth";
+import {isAccountLinked, isLoggedIn, getUsername, getJWT} from "./auth";
 import {CategoryDistributionChart} from "../charts/transactions-category-distribution";
 import {Grid, Typography} from "@mui/material";
 import {CategorySpendingsGraph} from "../charts/transactions-spendings";
@@ -144,10 +144,10 @@ export const Transactions = () => {
     "12",
   ];
 
-  const getCategoryData = (idToken: any) => {
+  const getCategoryData = () => {
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}/api/transactions/categorized/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
+        `${process.env.REACT_APP_API_URL}/api/transactions/categorized/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
       )
       .then((res) => {
         setCategoryData(res.data);
@@ -157,10 +157,10 @@ export const Transactions = () => {
       });
   };
 
-  const getMonthlyTotalsData = (idToken: any) => {
+  const getMonthlyTotalsData = () => {
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}/api/transactions/totals/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
+        `${process.env.REACT_APP_API_URL}/api/transactions/totals/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
       )
       .then((res) => {
         setMonthlyTotalsData(res.data);
@@ -170,10 +170,10 @@ export const Transactions = () => {
       });
   };
 
-  const getTransactionRows = (idToken: any) => {
+  const getTransactionRows = () => {
     axios
       .get(
-        `${process.env.REACT_APP_API_URL}/api/transactions/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
+        `${process.env.REACT_APP_API_URL}/api/transactions/${getUsername()}/${year}/${formattedMonth}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
       )
       .then((res) => {
         setTransactionRows(res.data);
@@ -197,10 +197,9 @@ export const Transactions = () => {
     };
 
     const fetchData = async () => {
-      const idToken = await getIDToken();
-      await getCategoryData(idToken);
-      await getMonthlyTotalsData(idToken);
-      await getTransactionRows(idToken);
+      await getCategoryData();
+      await getMonthlyTotalsData();
+      await getTransactionRows();
     };
 
     authenticate();

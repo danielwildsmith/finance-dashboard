@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {Totals} from "../charts/balances-totals";
 import {Box} from "@mui/material";
 import axios from "axios";
-import {getIDToken, getUsername, isAccountLinked, isLoggedIn} from "./auth";
+import {getJWT, getUsername, isAccountLinked, isLoggedIn} from "./auth";
 import {useNavigate} from "react-router-dom";
 import {NetWorthTimeGraph} from "../charts/balances-time";
 import {PageLayout} from "../page-layout";
@@ -28,9 +28,9 @@ export const Balances = () => {
 
   const navigate = useNavigate();
 
-  const getCurrentBalances = (idToken: any) => {
+  const getCurrentBalances = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/balances/current/${getUsername()}`, { headers: {"Authorization" : `Bearer ${idToken}`} })
+      .get(`${process.env.REACT_APP_API_URL}/api/balances/current/${getUsername()}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} })
       .then((res) => {
         setCurrentBalances(res.data);
       })
@@ -39,9 +39,9 @@ export const Balances = () => {
       });
   };
 
-  const getRecentNetWorthData = (idToken: any) => {
+  const getRecentNetWorthData = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/balances/history/${getUsername()}`, { headers: {"Authorization" : `Bearer ${idToken}`} })
+      .get(`${process.env.REACT_APP_API_URL}/api/balances/history/${getUsername()}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} })
       .then((res) => {
         setRecentNetWorthData(res.data);
       })
@@ -64,9 +64,8 @@ export const Balances = () => {
     };
 
     const fetchData = async () => {
-      const idToken = await getIDToken();
-      await getCurrentBalances(idToken);
-      await getRecentNetWorthData(idToken);
+      await getCurrentBalances();
+      await getRecentNetWorthData();
     };
 
     fetchData();

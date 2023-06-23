@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {getIDToken, getUsername, isLoggedIn} from "./auth";
+import {getJWT, getUsername, isLoggedIn} from "./auth";
 import {DashboardCards} from "../dashboard-cards";
 import {PageLayout} from "../page-layout";
 import axios from "axios";
@@ -14,9 +14,8 @@ export const Dashboard = () => {
   useEffect(() => {
     const checkAccountLinkedStatus = async () => {
       try {
-        const idToken = await getIDToken();
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`, { headers: {"Authorization" : `Bearer ${idToken}`} }
+          `${process.env.REACT_APP_API_URL}/api/user-tokens/${getUsername()}`, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
         );
         const isLinked = res.data > 0;
         setAccountLinked(isLinked);

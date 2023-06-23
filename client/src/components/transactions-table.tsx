@@ -14,7 +14,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert, {AlertProps} from "@mui/material/Alert";
 import axios from "axios";
 import {Typography} from "@mui/material";
-import { getIDToken } from "./pages/auth";
+import { getJWT } from "./pages/auth";
 
 const amountComparator: GridComparatorFn<string> = (a1, a2): number =>
   parseFloat(a1.slice(1)) - parseFloat(a2.slice(1));
@@ -51,12 +51,11 @@ export const BasicEditingGrid = ({
     newRow: GridRowModel,
     oldRow: GridRowModel
   ) => {
-    const idToken = await getIDToken();
     if (newRow.note !== oldRow.note) {
       try {
         const response = await axios.put(
           `${process.env.REACT_APP_API_URL}/api/transactions/note/${newRow.id}`,
-          {note: newRow.note, category: newRow.category}, { headers: {"Authorization" : `Bearer ${idToken}`} }
+          {note: newRow.note, category: newRow.category}, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
         );
         setSnackbar({
           children: "Note successfully saved",
@@ -70,7 +69,7 @@ export const BasicEditingGrid = ({
       try {
         const response = await axios.put(
           `${process.env.REACT_APP_API_URL}/api/transactions/verify/${newRow.id}`,
-          {verified: newRow.verified}, { headers: {"Authorization" : `Bearer ${idToken}`} }
+          {verified: newRow.verified}, { headers: {"Authorization" : `Bearer ${getJWT()}`} }
         );
 
         const message = newRow.verified ?
