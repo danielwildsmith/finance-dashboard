@@ -4,6 +4,7 @@ import {TransactionsGetRequest} from "plaid";
 import {format} from "date-fns";
 import {Transaction} from "../models/transaction";
 import {Op, Model} from "sequelize";
+import { authenticateUser } from "../utils/auth";
 
 interface CategoryData {
   category: string;
@@ -96,7 +97,7 @@ router.post("/:username", async function(req : Request, res : Response) {
 });
 
 // for month to month comparisons with category breakdown
-router.get("/categorized/:username/:yyyy/:mm", async function(req : Request, res : Response) {
+router.get("/categorized/:username/:yyyy/:mm", authenticateUser, async function(req : Request, res : Response) {
   const username : string = req.params.username;
   let year : string = req.params.yyyy;
   const month : string = req.params.mm;
@@ -178,7 +179,7 @@ router.get("/categorized/:username/:yyyy/:mm", async function(req : Request, res
 });
 
 // for monthly totals chart
-router.get("/totals/:username/:yyyy/:mm", async function(req : Request, res : Response) {
+router.get("/totals/:username/:yyyy/:mm", authenticateUser, async function(req : Request, res : Response) {
   const username : string = req.params.username;
   let year : string = req.params.yyyy;
   const month : string = req.params.mm;
@@ -299,7 +300,7 @@ router.get("/totals/:username/:yyyy/:mm", async function(req : Request, res : Re
 });
 
 // for the transactions table
-router.get("/:username/:yyyy/:mm", async function(req : Request, res : Response) {
+router.get("/:username/:yyyy/:mm", authenticateUser, async function(req : Request, res : Response) {
   const username : string = req.params.username;
   const year : string = req.params.yyyy;
   const month : string = req.params.mm;
@@ -409,7 +410,7 @@ router.put("/verify/:id", async function(req : Request, res : Response) {
   res.status(200).send(transaction_row);
 });
 
-router.get("/comparison/:username", async function(req : Request, res : Response) {
+router.get("/comparison/:username", authenticateUser, async function(req : Request, res : Response) {
   const username : string = req.params.username;
   const date = new Date();
   let formattedEndDate = format(date, "yyyy-MM-dd");

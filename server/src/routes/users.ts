@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import {User} from "../models/user";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const saltRounds = 4;
@@ -27,11 +28,13 @@ router.post("/signup", async (req: Request, res: Response) => {
       username: req.body.username,
       password: hash,
     });
-    res.status(200).send(user);
+
+    const token = jwt.sign({ username: user.dataValues.username }, process.env.JWT_SECRET as string, { expiresIn: '24h' });
+    res.status(200).send(token);
     return;
   } catch (error) {
     console.error(error);
-    res.status(400).send("Error hashing and salting password.");
+    res.status(400).send(error);
   }
 });
 
@@ -48,13 +51,14 @@ router.post("/signin", async (req: Request, res: Response) => {
     return;
   }
 
-  // check if incorrect password
+  // check password
   bcrypt.compare(
     req.body.password,
     user.getDataValue("password"),
-    (_, result) => {
+    async (_, result)  => {
       if (result) {
-        res.status(200).send("User signed in successfully");
+        const token = jwt.sign({ username: user.dataValues.username }, process.env.JWT_SECRET as string, { expiresIn: '24h' });
+        res.status(200).send(token);
       } else {
         res.status(401).send({error: "Incorrect credentials."});
       }

@@ -8,21 +8,12 @@ import bodyParser from 'body-parser';
 import { db, ConnectDB } from './utils/config';
 // import { CreateSampleUserData } from './utils/seed';
 import * as functions from 'firebase-functions';
-import { validateFirebaseIdToken } from './utils/auth';
 
 const app : Express = express();
 
 ConnectDB();
 
 // init middleware
-// Apply the validateFirebaseIdToken middleware to all routes except '/signin'
-app.use((req, res, next) => {
-  if (req.path !== '/api/users/token' && process.env.NODE_ENV == 'production') {
-    validateFirebaseIdToken(req, res, next);
-  } else {
-    next();
-  }
-});
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {

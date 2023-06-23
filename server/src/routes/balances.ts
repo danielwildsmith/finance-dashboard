@@ -3,6 +3,7 @@ import {plaidClient} from "../utils/config";
 import {AccountsBalanceGetRequest} from "plaid";
 import {Balance} from "../models/balance";
 import {format} from "date-fns";
+import { authenticateUser } from "../utils/auth";
 
 interface TypedBalance {
   type: string;
@@ -53,7 +54,7 @@ router.post("/:username", async function(req: Request, res: Response) {
 });
 
 // for current net worth and breakdown by type charts
-router.get("/current/:username", async function(req: Request, res: Response) {
+router.get("/current/:username", authenticateUser, async function(req: Request, res: Response) {
   const username: string = req.params.username;
   const currentDate = new Date();
   const formattedDate: string = format(currentDate, "yyyy-MM-dd");
@@ -94,7 +95,7 @@ router.get("/current/:username", async function(req: Request, res: Response) {
 });
 
 // for net worth over time graph
-router.get("/history/:username", async function(req: Request, res: Response) {
+router.get("/history/:username", authenticateUser, async function(req: Request, res: Response) {
   const username: string = req.params.username;
   const currentDate = new Date();
   const datedNetWorths: DatedNetWorth[] = [];
@@ -130,7 +131,7 @@ router.get("/history/:username", async function(req: Request, res: Response) {
 
 // for dashboard balance card - data on last 30 days vs previous 30 days
 router.get(
-  "/comparison/:username",
+  "/comparison/:username", authenticateUser, 
   async function(req: Request, res: Response) {
     const username: string = req.params.username;
     const date = new Date();

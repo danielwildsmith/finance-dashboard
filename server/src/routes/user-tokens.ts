@@ -3,8 +3,9 @@ const router = express.Router();
 import {LinkTokenCreateRequest} from "plaid";
 import {plaidClient} from "../utils/config";
 import {UserToken} from "../models/user-token";
+import { authenticateUser } from "../utils/auth";
 
-router.post("/create/:username", async (request : Request, response: Response) => {
+router.post("/create/:username", authenticateUser, async (request : Request, response: Response) => {
   const username = request.params.username;
   const plaidReq: LinkTokenCreateRequest = {
     user: {
@@ -29,7 +30,7 @@ router.post("/create/:username", async (request : Request, response: Response) =
   }
 });
 
-router.post("/set/:username", async (request: Request, response: Response) => {
+router.post("/set/:username", authenticateUser, async (request: Request, response: Response) => {
   // exchanges the public token provided from Link component for a permanent access token
   const publicToken = request.body.public_token;
   const username: string = request.params.username;
@@ -52,7 +53,7 @@ router.post("/set/:username", async (request: Request, response: Response) => {
   }
 });
 
-router.get("/:username", async (req: Request, res: Response) => {
+router.get("/:username", authenticateUser, async (req: Request, res: Response) => {
   const username: string = req.params.username;
 
   const accessTokens = await UserToken.findAll({
