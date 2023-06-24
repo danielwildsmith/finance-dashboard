@@ -208,7 +208,7 @@ export const AuthForm = ({type}: { type: string }) => {
                 style={{backgroundColor: "#343a46"}}
                 InputLabelProps={{style: {color: "#707787"}}}
                 inputProps={{style: {color: "#707787"}}}
-                placeholder="user_good"
+                placeholder="sample"
               />
               <TextField
                 margin="normal"
@@ -221,7 +221,7 @@ export const AuthForm = ({type}: { type: string }) => {
                 style={{backgroundColor: "#343a46"}}
                 InputLabelProps={{style: {color: "#707787"}}}
                 inputProps={{style: {color: "#707787"}}}
-                placeholder="pass_good"
+                placeholder="password"
               />
               {alert}
               <Button
@@ -251,23 +251,36 @@ export const AuthForm = ({type}: { type: string }) => {
         </Container>
       </div>
       <div
-        style={{display: "flex", alignItems: "flex-end", textAlign: "center"}}
+        style={{display: "flex", flexDirection: 'column', alignItems: "flex-end", textAlign: "center", marginTop: 8}}
       >
-        <Typography
-          variant="body1"
-          sx={{width: "100%", flexGrow: 1, marginTop: 7, color: "#878fa0"}}
-        >
-          {"Created by Daniel Wildsmith. Project details can be found "}
-          <Link
-            href="https://github.com/danielwildsmith/finance-dashboard"
+        <>
+          <Typography
             variant="body1"
-            target="_blank"
-            rel="noopener"
+            sx={{width: "100%", color: "#878fa0"}}
           >
-            {"here"}
-          </Link>
-          .
-        </Typography>
+            {"Created by Daniel Wildsmith. Project details can be found "}
+            <Link
+              href="https://github.com/danielwildsmith/finance-dashboard"
+              variant="body1"
+              target="_blank"
+              rel="noopener"
+            >
+              {"here"}
+            </Link>
+            .
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{width: "100%", color: "#878fa0"}}
+          >
+            {"To view sample data, log in with: "}
+            <span style={{ color: "#f6f7f9" }}>sample</span>
+            {", "}
+            <span style={{ color: "#f6f7f9" }}>password</span>
+            .
+          </Typography>
+        </>
+        
       </div>
     </>
   );
