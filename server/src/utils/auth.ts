@@ -5,7 +5,6 @@ export const authenticateUser = (req : Request, res: Response, next : NextFuncti
   if(process.env.NODE_ENV != 'development') {
     const token = req.headers.authorization?.split(' ')[1];
     const usernameFromParams = req.params.username;
-    console.log(token, usernameFromParams);
 
     if (token) {
       jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
@@ -14,7 +13,6 @@ export const authenticateUser = (req : Request, res: Response, next : NextFuncti
         }
 
         const usernameFromToken = (decoded as JwtPayload).username;
-        console.log(usernameFromToken);
 
         if (usernameFromToken !== usernameFromParams) {
           return res.sendStatus(401); // Unauthorized access
