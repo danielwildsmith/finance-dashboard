@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express";
 const router = express.Router();
-import {LinkTokenCreateRequest} from "plaid";
+import {CountryCode, LinkTokenCreateRequest, Products} from "plaid";
 import {plaidClient} from "../utils/config";
 import {UserToken} from "../models/user-token";
 import { authenticateUser } from "../utils/auth";
@@ -12,14 +12,12 @@ router.post("/create/:username", authenticateUser, async (request : Request, res
       // This should correspond to a unique id for the current user. (1 for now just testing)
       client_user_id: username as string,
     },
-    client_name: "Plaid Test App",
-    // @ts-ignore
-    products: ["transactions"],
+    client_name: "Finance Dashboard",
+    products: [Products.Transactions],
     language: "en",
     webhook: "https://danielwildsmith.github.io/finance-dashboard/#/dashboard",
     redirect_uri: "https://danielwildsmith.github.io/finance-dashboard/",
-    // @ts-ignore
-    country_codes: ["US"],
+    country_codes: [CountryCode.Us],
   };
   try {
     const createTokenResponse = await plaidClient.linkTokenCreate(plaidReq);
