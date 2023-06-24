@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/finance-dashboard/static/js/main.05322745.js",
+    "main.js": "/finance-dashboard/static/js/main.c27ecb5f.js",
     "index.html": "/finance-dashboard/index.html",
-    "main.05322745.js.map": "/finance-dashboard/static/js/main.05322745.js.map"
+    "main.c27ecb5f.js.map": "/finance-dashboard/static/js/main.c27ecb5f.js.map"
   },
   "entrypoints": [
-    "static/js/main.05322745.js"
+    "static/js/main.c27ecb5f.js"
   ]
 }
