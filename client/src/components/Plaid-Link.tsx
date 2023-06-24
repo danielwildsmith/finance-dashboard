@@ -71,7 +71,7 @@ const Link: React.FC<LinkProps> = (props: LinkProps) => {
         tokenReq, { headers: {"Authorization" : `Bearer ${props.idToken}`} }
       )
       .then((res) => {
-        const req = {access_token: res.data};
+        const req = {access_token: res.data, start_date: '2010-01-01'};
 
         // Create an array of axios requests
         const requests = [

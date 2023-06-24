@@ -6,8 +6,9 @@ dotenv.config();
 import apiRoute from './routes/api'
 import bodyParser from 'body-parser';
 import { db, ConnectDB } from './utils/config';
-// import { CreateSampleUserData } from './utils/seed';
+import { UpdatePlaidUserData, UpdateSampleUserData } from './utils/seed';
 import * as functions from 'firebase-functions';
+// import { UpdateSampleUserData } from './utils/seed';
 
 const app : Express = express();
 
@@ -46,7 +47,6 @@ else if(process.env.NODE_ENV == "production") {
   app.use('/', apiRoute);
 }
 
-// CreateSampleUserData();
 db.sync();
 
 exports.api = functions.https.onRequest((req, res) => {
@@ -69,4 +69,11 @@ exports.api = functions.https.onRequest((req, res) => {
   }
   // Forward the request to the Express app
   app(req, res);
+});
+
+exports.updateUserData = functions.pubsub.schedule('every day 21:01').onRun(async () => {
+  await ConnectDB(); 
+  await UpdatePlaidUserData();
+  await UpdateSampleUserData();
+  await db.sync();
 });

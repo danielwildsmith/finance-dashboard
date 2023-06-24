@@ -60,13 +60,12 @@ const router = express.Router();
 // for seeding the db
 router.post("/:username", async function(req : Request, res : Response) {
   const currentDate = new Date();
-  const formattedDate : string = format(currentDate, "yyyy-MM-dd");
   const username = req.params.username;
 
   const transactionsReq: TransactionsGetRequest = {
     access_token: req.body.access_token,
-    start_date: "2000-01-01",
-    end_date: formattedDate,
+    start_date: req.body.start_date,
+    end_date: format(currentDate, "yyyy-MM-dd"),
     options: {include_personal_finance_category: true},
   };
 
@@ -76,23 +75,19 @@ router.post("/:username", async function(req : Request, res : Response) {
       (async () => {
         await Transaction.findOrCreate(
           {
-            where: {transaction_id: transaction.transaction_id},
-            defaults:
-                      {
-                        date: transaction.date,
-                        name: transaction.merchant_name,
-                        // @ts-ignore
-                        category: JSON.stringify(transaction.personal_finance_category.primary),
-                        amount: transaction.amount,
-                        username: username,
-                      },
+            // Avoid duplicate transactions
+            where: {
+            //@ts-ignore
+              transaction_id: transaction.transaction_id, date: transaction.date, name: transaction.merchant_name, category: JSON.stringify(transaction.personal_finance_category.primary),
+              amount: transaction.amount, username: username
+            },
           }
         );
       })();
     });
     res.sendStatus(200);
   } catch (error) {
-    console.log(error);
+    res.status(400).send(error);
   }
 });
 

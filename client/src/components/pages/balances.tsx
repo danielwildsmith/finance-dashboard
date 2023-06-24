@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {Totals} from "../charts/balances-totals";
-import {Box} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import axios from "axios";
 import {getJWT, getUsername, isAccountLinked, isLoggedIn} from "./auth";
 import {useNavigate} from "react-router-dom";
@@ -75,10 +75,30 @@ export const Balances = () => {
   const Content = () => {
     return (
       <>
-        <Totals data={currentBalances} />
-        <Box sx={{height: "43vh", marginLeft: "3vw", marginRight: "3vw"}}>
-          <NetWorthTimeGraph data={recentNetWorthData} />
-        </Box>
+        {currentBalances?.length === 0 ? ( 
+          <Typography
+          variant="h6"
+          sx={{
+            color: "#878fa0",
+            height: "33vh",
+            width: "100%",
+            display: "flex",
+            textAlign: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          Uh Oh... No balance data could be found for this user.
+        </Typography>
+        ) : (
+          <>
+            <Totals data={currentBalances} />
+            <Box sx={{height: "43vh", marginLeft: "3vw", marginRight: "3vw"}}>
+              <NetWorthTimeGraph data={recentNetWorthData} />
+            </Box>
+          </>
+        )
+        }
       </>
     );
   };

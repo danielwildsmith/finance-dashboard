@@ -25,8 +25,6 @@ const router = express.Router();
 
 router.post("/:username", async function(req: Request, res: Response) {
   const username = req.params.username;
-  const currentDate = new Date();
-  const formattedDate: string = format(currentDate, "yyyy-MM-dd");
 
   const balancesReq: AccountsBalanceGetRequest = {
     access_token: req.body.access_token,
@@ -37,7 +35,7 @@ router.post("/:username", async function(req: Request, res: Response) {
     response.data.accounts.forEach((account) => {
       (async () => {
         await Balance.findOrCreate({
-          where: {account_id: account.account_id, date: formattedDate},
+          where: {account_id: account.account_id, date: format(new Date(), "yyyy-MM-dd")},
           defaults: {
             amount: account.balances.current,
             account_name: account.name,
@@ -50,6 +48,7 @@ router.post("/:username", async function(req: Request, res: Response) {
     res.sendStatus(200);
   } catch (error) {
     console.error(error);
+    res.status(400).send(error);
   }
 });
 
@@ -68,9 +67,7 @@ router.get("/current/:username", authenticateUser, async function(req: Request, 
   });
 
   if (balances.length === 0) {
-    res.status(404).send({
-      error: "No balance records associated with this username on this day",
-    });
+    res.send(balances);
     return;
   }
 
