@@ -5,7 +5,7 @@ A personal project that aggregates data from multiple banking accounts into a ce
 
 The backend server is deployed using Firebase Cloud Functions and includes JWT authentication for secure user access. A daily background job updates the MySQL database with the latest transaction and balance data.
 
-For easy exploration, the website provides sample data accessible with the following credentials: username: **sample**, password: **password**. Please note that linking your personal financial accounts involves risks that should be considered.
+For easy exploration, the website provides sample data accessible with the following credentials - username: **sample**, password: **password**. Please note that linking your personal financial accounts involves risks that should be considered.
 
 ## Preview
 _Note that this is sample data - I'm not this rich lol._
