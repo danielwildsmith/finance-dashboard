@@ -188,14 +188,15 @@ export const CreateSampleUserData = async () => {
 };
 
 export const UpdatePlaidUserData = async () => {
-  let yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDay() - 1);
+  // set start to 12 days prior to allow pending transactions to update
+  let startDate = new Date();
+  startDate.setDate(startDate.getDay() - 12);
   const user_tokens = await UserToken.findAll();
 
   for (let i = 0; i < user_tokens.length; i++) {
     const req = {
       access_token: user_tokens[i].dataValues.access_token,
-      start_date: format(yesterdayDate, "yyyy-MM-dd")
+      start_date: format(startDate, "yyyy-MM-dd")
     };
     await axios
       .post(
@@ -203,7 +204,7 @@ export const UpdatePlaidUserData = async () => {
         req
       )
       .then((_) => {
-        functions.logger.log("Successfully retrieved recent transaction data for Plaid users.");
+        functions.logger.log(`Successfully retrieved recent transaction data for user: ${user_tokens[i].dataValues.username}.`);
       })
       .catch((error) => {
         functions.logger.error(error.message);
@@ -215,7 +216,7 @@ export const UpdatePlaidUserData = async () => {
         req
       )
       .then((_) => {
-        functions.logger.log("Successfully retrieved recent balance data for Plaid users.");
+        functions.logger.log(`Successfully retrieved recent balance data for user: ${user_tokens[i].dataValues.username}.`);
       })
       .catch((error) => {
         functions.logger.error(error.message);

@@ -73,16 +73,20 @@ router.post("/:username", async function(req : Request, res : Response) {
     const transactions = await plaidClient.transactionsGet(transactionsReq);
     transactions.data.transactions.forEach((transaction) => {
       (async () => {
-        await Transaction.findOrCreate(
+        const [dbRecord, created] = await Transaction.findOrCreate(
           {
-            // Avoid duplicate transactions
             where: {
             //@ts-ignore
               transaction_id: transaction.transaction_id, date: transaction.date, name: transaction.merchant_name, category: JSON.stringify(transaction.personal_finance_category.primary),
-              amount: transaction.amount, username: username
+              username: username
             },
+            defaults: { amount: transaction.amount }
           }
-        );
+        )
+        // Update amount for existing/pending transactions
+        if(!created) {
+          dbRecord.dataValues.amount = transaction.amount;
+        }
       })();
     });
     res.sendStatus(200);
