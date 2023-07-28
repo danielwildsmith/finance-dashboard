@@ -33,19 +33,21 @@ router.post("/:username", async function(req: Request, res: Response) {
   try {
     const response = await plaidClient.accountsBalanceGet(balancesReq);
     response.data.accounts.forEach((account) => {
-      (async () => {
-        await Balance.findOrCreate({
-          where: {account_id: account.account_id, date: format(new Date(), "yyyy-MM-dd")},
-          defaults: {
-            amount: account.balances.current,
-            account_name: account.name,
-            type: account.subtype,
-            username: username,
-          },
-        });
-      })();
+      if(account.type != 'credit') {
+        (async () => {
+          await Balance.findOrCreate({
+            where: {account_id: account.account_id, date: format(new Date(), "yyyy-MM-dd")},
+            defaults: {
+              amount: account.balances.current,
+              account_name: account.name,
+              type: account.subtype,
+              username: username,
+            },
+          });
+        })();
+      }
     });
-    res.sendStatus(200);
+    res.status(200).send(response.data.accounts);
   } catch (error) {
     console.error(error);
     res.status(400).send(error);
