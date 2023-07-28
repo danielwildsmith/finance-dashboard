@@ -72,24 +72,22 @@ router.post("/:username", async function(req : Request, res : Response) {
   try {
     const transactions = await plaidClient.transactionsGet(transactionsReq);
     transactions.data.transactions.forEach((transaction) => {
-      (async () => {
-        const [dbRecord, created] = await Transaction.findOrCreate(
-          {
-            where: {
-            //@ts-ignore
-              transaction_id: transaction.transaction_id, date: transaction.date, name: transaction.merchant_name, category: JSON.stringify(transaction.personal_finance_category.primary),
-              username: username
-            },
-            defaults: { amount: transaction.amount }
-          }
-        )
-        // Update amount for existing/pending transactions
-        if(!created) {
-          dbRecord.dataValues.amount = transaction.amount;
-        }
-      })();
+      if(!transaction.pending) {
+        (async () => {
+          await Transaction.findOrCreate(
+            {
+              where: {
+              //@ts-ignore
+                transaction_id: transaction.transaction_id, date: transaction.date, name: transaction.merchant_name, category: JSON.stringify(transaction.personal_finance_category.primary),
+                username: username
+              },
+              defaults: { amount: transaction.amount }
+            }
+          )
+        })();
+      }
     });
-    res.sendStatus(200);
+    res.status(200).send(transactions.data.transactions);
   } catch (error) {
     res.status(400).send(error);
   }
