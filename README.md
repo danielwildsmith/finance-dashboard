@@ -10,7 +10,6 @@
 - [Rest API Documentation](#rest-api)
   * [Transactions](#transactions)
   * [Balances](#balances)
-  * [Net Worth](#net-worth)
   * [Users](#users)
   * [User Tokens and Plaid Configuration](#user-tokens-and-plaid-configuration)
 - [License](#license)
