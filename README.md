@@ -3,18 +3,18 @@
 ![Screenshot (15)](https://github.com/danielwildsmith/finance-dashboard/assets/92833122/d1dcd311-b693-43e9-a347-8d407943e08f)
 
 ## Table of Contents
-1. [Description](#description)
-2. [Installation and Usage](#installation-and-usage)
-  - [Client Setup](#client-setup)
-  - [Server Setup](#server-setup)
-3. [Rest API Documentation](#rest-api)
-  - [Transactions](#transactions)
-  - [Balances](#balances)
-  - [Net Worth](#net-worth)
-  - [Users](#users)
-  - [User Tokens and Plaid Configuration](#user-tokens-and-plaid-configuration)
-4. [License](#license)
-5. [Bonus Message](#bonus-message)
+- [Description](#description)
+- [Installation and Usage](#installation-and-usage)
+  * [Client Setup](#client-setup)
+  * [Server Setup](#server-setup)
+- [Rest API Documentation](#rest-api)
+  * [Transactions](#transactions)
+  * [Balances](#balances)
+  * [Net Worth](#net-worth)
+  * [Users](#users)
+  * [User Tokens and Plaid Configuration](#user-tokens-and-plaid-configuration)
+- [License](#license)
+- [Bonus Message](#bonus-message)
 
 ## Description
 Through the React frontend, users can easily gain financial insights by viewing detailed and up-to-date charts and graphs, including net worth over time and month-to-month transaction comparisons. The website also features a Material UI table where users can verify and add notes to transactions.
