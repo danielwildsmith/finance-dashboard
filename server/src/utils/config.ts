@@ -1,5 +1,5 @@
-import {Configuration, PlaidApi, PlaidEnvironments} from "plaid";
-import {Sequelize} from "sequelize";
+import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
+import { Sequelize } from "sequelize";
 
 const configPlaid = new Configuration({
   basePath: PlaidEnvironments.development,
@@ -13,7 +13,7 @@ const configPlaid = new Configuration({
 
 export const plaidClient = new PlaidApi(configPlaid);
 
-// Configure MySQL database hosted on PlanetScale
+// Configure MySQL database
 export const db = new Sequelize(
   process.env.DB_NAME as string,
   process.env.DB_USERNAME as string,
@@ -27,14 +27,16 @@ export const db = new Sequelize(
       },
     },
     logging: false,
-  }
+  },
 );
 
 export const ConnectDB = async () => {
   try {
     await db.authenticate();
-    console.log("Connection to PlanetScale has been established successfully.");
+    console.log(
+      "Connection to MySQL database has been established successfully.",
+    );
   } catch (error) {
-    console.error("Unable to connect to the PlanetScale database:", error);
+    console.error("Unable to connect to the MySQL database:", error);
   }
 };
