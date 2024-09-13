@@ -7,13 +7,12 @@
 - [Installation and Usage](#installation-and-usage)
   * [Client Setup](#client-setup)
   * [Server Setup](#server-setup)
-- [Rest API Documentation](#rest-api)
+- [Rest API Documentation](#rest-api-documentation)
   * [Transactions](#transactions)
   * [Balances](#balances)
   * [Users](#users)
   * [User Tokens and Plaid Configuration](#user-tokens-and-plaid-configuration)
 - [License](#license)
-- [Bonus Message](#bonus-message)
 
 ## Description
 Through the React frontend, users can easily gain financial insights by viewing detailed and up-to-date charts and graphs, including net worth over time and month-to-month transaction comparisons. The website also features a Material UI table where users can verify and add notes to transactions.
@@ -25,15 +24,19 @@ For easy exploration, the website provides sample data accessible with the follo
 ### Update 03/22/2024
 Website is no longer running - Planetscale database removed its free tier. I used this to track my finances for almost a year, it was awesome!
 
+The Plaid API is a powerful tool but its limitations (e.g. it is unable to connect to many banks/credit unions) have caused me to discontinue this project's development. I am still searching for the perfect budgeting solution.
+
+Still though, this project was a massive stepping stone in my development journey. It isn't perfect, but I learned a lot from it. I hope you find it useful in some way.
 
 ## Installation and Usage
+Pre-requisite: Node.js must be installed.
 ### Client Setup
 1. Navigate to the client directory: ```cd client```
 2. Install dependencies: ```npm install```
 3. Create a .env file in the client directory with the following variables:
-```
-REACT_APP_API_URL=server_url
-```
+    ```
+    REACT_APP_API_URL=server_url
+    ```
 4. Run ```npm start``` to start the client in development mode
 
 #### Client Deployment
@@ -43,247 +46,307 @@ Run ```npm run deploy``` to deploy the client to GitHub Pages
 1. Navigate to the server directory: ```cd server```
 2. Install dependencies: ```npm install```
 3. Create a .env file in the server directory with the following variables:
-```
-DB_NAME=your_database_name
-DB_USER=your_database_username
-DB_PASSWORD=your_database_password
-DB_HOST=your_database_host
-PLAID_CLIENT_ID=your_plaid_client_id
-PLAID_DEVELOPMENT_SECRET=your_plaid_development_secret
-NODE_ENV=development
-JWT_SECRET=your_jwt_secret
-```
-###### Notes
-- Change NODE_ENV to production when deploying.
-- The Plaid client ID and secret can be obtained by creating an account at https://plaid.com/
-4. ```npm run dev``` to start the server in development mode
+    ```
+    DB_NAME=your_database_name
+    DB_USER=your_database_username
+    DB_PASSWORD=your_database_password
+    DB_HOST=your_database_host
+    PLAID_CLIENT_ID=your_plaid_client_id
+    PLAID_DEVELOPMENT_SECRET=your_plaid_development_secret
+    NODE_ENV=development
+    JWT_SECRET=your_jwt_secret
+    ```
+
+    ###### Notes
+    - Change NODE_ENV to production when deploying.
+    - The Plaid client ID and secret can be obtained by creating an account at https://plaid.com/
+4. Run ```npm run dev``` to start the server in development mode
 
 #### Server Deployment
-Run ```npm run deploy``` to deploy the server to Firebase Cloud Functions.
+Run ```npm run deploy``` to deploy the server to Firebase Cloud Functions
 
-## Rest API
-Notes:
-- Most endpoints require a valid JWT token in the Authorization header.
-- The parameter ```username``` seen in many paths is the username of the account holder.
-
+## Rest API Documentation
 ### Transactions
-1. Create new user transactions (used for seeding database)
-
-```POST /transactions/:username```
+### POST ```/transactions/:username```
+- Description: Used to seed the database with transactions of a new user.
+- Parameters:
+  * ```username```: The username of the account holder
 - Request Body:
-  - ```access_token``` (string): Plaid access token for the user's accounts
-  - ```start_date``` (string): Start date for fetching transactions (format: "YYYY-MM-DD")
+  * ```access_token```: The Plaid permanent access token for the user's accounts
+  * ```start_date```: The start date for fetching transactions (format: "YYYY-MM-DD")
 - Response:
-  - Status 200: Returns an array of transaction objects
-  ```
-  type Transaction = {
-    transaction_id: string;
-    date: string;
-    name: string;
-    amount: number;
-    category: string;
-    note: string;
-    verified: boolean;
-    username: string;
-  };
-  ```
-  - Status 400: Returns an error object if the request fails
+  * ```200 OK```: Returns an array of Transaction objects
+      ```
+      [
+        {
+          "transaction_id": "12345",
+          "date": "2024-09-01",
+          "name": "Grocery Store",
+          "amount": 50.25,
+          "category": "Food and Drink",
+          "note": "",
+          "verified": false,
+          "username": "user123"
+        },
+        ...
+      ]
+      ```
+  * ```400 Bad Request```: Returns an error message if the access token is invalid
 
-2. Get categorized transactions of last two months
-
-```GET /transactions/categorized/:username/:yyyy/:mm```
+### GET ```/transactions/categorized/:username/:yyyy/:mm```
+- Description: Get transaction totals of each category for the specified month and the previous month for a specified user.
+- Headers:
+  * ```Authorization```: JWT token
 - Parameters:
-  - ```yyyy```: Year (4 digits)
-  - ```mm```: Month (2 digits)
+  * ```username```: The username of the account holder
+  * ```yyyy```: Year (4 digits)
+  * ```mm```: Month (2 digits)
 - Response:
-  - Status 200: Returns an array of CategoryData objects
-  ```
-  interface CategoryData {
-    category: string;
-    month: string;
-    previous_month: string;
-    amount: number;
-    previous_month_amount: number;
-  }
-  ```
+  - ```200 OK```: Returns an array of CategoryData objects
+      ```
+      [
+        {
+          "category": "Food and Drink",
+          "month": "2024-09",
+          "amount": 300.00,
+          "previous_month": "2024-08",
+          "previous_month_amount": 250.00
+        },
+        ...
+      ]
+      ```
 
-3. Get transaction totals of user from the last three months
-
-```GET /transactions/totals/:username/:yyyy/:mm```
+### GET ```/transactions/totals/:username/:yyyy/:mm```
+- Description: Get the transaction totals for each category of the specified month, previous month, and the penultimate month for a specified user.
+- Headers:
+  * ```Authorization```: JWT token
 - Parameters:
-  - ```yyyy```: Year (4 digits)
-  - ```mm```: Month (2 digits)
+  * ```username```: The username of the account holder
+  * ```yyyy```: Year (4 digits)
+  * ```mm```: Month (2 digits)
 - Response:
-  - Status 200: Returns an array of MonthlyTotalData objects
-  ```
-  interface MonthlyTotalData {
-    month: string;
-    "Food And Drink": number;
-    "General Merchandise": number;
-    Transportation: number;
-    "Rent And Utilities": number;
-    Travel: number;
-    "Transfer Out": number;
-    "General Services": number;
-    Other: number;
-    total: number;
-  }
-  ```
-4. Get all transactions for a specific month
+  * ```200 OK```: Returns an array of MonthlyTotalData objects
+      ```
+      [
+        {
+          "month": "2024-09";
+          "Food And Drink": 100.00;
+          "General Merchandise": 50.00;
+          Transportation: 30.00;
+          "Rent And Utilities": 800.00;
+          Travel: 0.00;
+          "Transfer Out": 300.00;
+          "General Services": 20.00;
+          Other: 0.00;
+          total: 1300;
+        },
+        {
+          "month": "2024-08";
+          ...
+        },
+        ...
+      ]
+      ```
 
-```GET /transactions/:username/:yyyy/:mm```
+### GET ```/transactions/:username/:yyyy/:mm```
+- Description: Get all transactions for a specified user in a specified month ordered by date in ascending order.
+- Headers:
+  * ```Authorization```: JWT token
 - Parameters:
-  - ```yyyy```: Year (4 digits)
-  - ```mm```: Month (2 digits)
+  * ```username```: The username of the account holder
+  * ```yyyy```: Year (4 digits)
+  * ```mm```: Month (2 digits)
 - Response:
-  - Status 200: Returns an array of TransactionRow objects
-  ```
-  interface TransactionRow {
-    id: string;
-    date: string;
-    name: string;
-    category: string;
-    amount: number;
-    note: string;
-    verified: boolean;
-  }
-  ```
+  * ```200 OK```: Returns an array of TransactionRow objects
+      ```
+      [
+        {
+          id: "12345";
+          date: "2024-09-01";
+          name: "Grocery Store";
+          category: "Food and Drink";
+          amount: 50.25;
+          note: "";
+          verified: false;
+        },
+        ...
+      ]
+      ```
 
-5. Update transaction note
-
-```PUT /transactions/note/:id```
+### GET ```/transactions/comparison/:username```
+- Description: Get the total amount of transactions in the last 30 days and the 30 days before that for a specified user.
+- Headers:
+  * ```Authorization```: JWT token
 - Parameters:
-  - ```id```: Transaction ID
+  * ```username```: The username of the account holder
+- Response:
+  * ```200 OK```: Returns a MonthlyAmountComparison object
+      ```
+      {
+        recentAmount: 906.00;
+        previousAmount: 812.00;
+        available: true;
+      }
+      ```
+
+### PUT ```/transactions/note/:id```
+- Description: Update the note of a transaction.
+- Parameters:
+  * ```id```: The transaction ID
 - Request Body:
-  - ```note``` (string): New note content
-  - ```category``` (string): Transaction category
+  * ```note```: The new note content
+  * ```category```: The transaction category
 - Response:
-  - Status 200: Returns the updated TransactionRow object
-  - Status 404: Returns an error object if the transaction is not found
+  * ```200 OK```: Returns the updated TransactionRow object
+      ```
+      {
+        id: "12345";
+        date: "2024-09-01";
+        name: "Grocery Store";
+        category: "Food and Drink";
+        amount: 50.25;
+        note: "Fruits and vegetables. And beer.";
+        verified: false;
+      }
+      ```
+  * ```404 Not Found```: Returns an error object if the transaction is not found
 
-6. Update transaction verification status
-
-```PUT /transactions/verify/:id```
+### PUT ```/transactions/verify/:id```
+- Description: Update the verification status of a transaction.
 - Parameters:
-  - ```id```: Transaction ID
+  * ```id```: The transaction ID
 - Request Body:
-  - ```verified``` (boolean): New verification status
-  - ```category``` (string): Transaction category
+  * ```verified``` (boolean): New verification status
+  * ```category```: Transaction category
 - Response:
-  - Status 200: Returns the updated TransactionRow object
-  - Status 404: Returns an error object if the transaction is not found
-
-7. Get transaction totals of the last 30 days and the 30 days before that
-
-```GET /transactions/comparison/:username```
-- Response:
-  - Status 200: Returns a MonthlyAmountComparison object
-  ```
-  interface MonthlyAmountComparison {
-    recentAmount: number;
-    previousAmount: number;
-    available: boolean;
-  }
-  ```
+  * ```200 OK```: Returns the updated TransactionRow object
+  * ```404 Not Found```: Returns an error object if the transaction is not found
 
 ### Balances
-1. Create new user balance entry
-
-```POST /balances/:username```
+### POST ```/balances/:username```
+- Description: Used to seed the database with balance information of a new user
+- Parameters:
+  * ```username```: The username of the account holder
 - Request Body:
-  - ```access_token``` (string): Plaid access token for the user's accounts
+  * ```access_token```: Plaid access token for the user's accounts
 - Response:
-  - Status 200: Returns an array of account objects with balance information
-  - Status 400: Returns an error object if the request fails
+  * ```200 OK```: Returns an array of account objects with balance information
+  * ```400 Not Found```: Returns an error message if the access token is invalid
 
-2. Get current balances of user
-
-```GET /balances/current/:username```
+### GET ```/balances/current/:username```
+- Description: Get all current balance records of a specified user.
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Response:
-  - Status 200: Returns an array of TypedBalance objects or an empty array if no balances are found
-  ```
-  interface TypedBalance {
-    type: string;
-    total: number;
-  }
-  ```
+  * ```200 OK```: Returns an array of TypedBalance objects or an empty array if no balances are found
+      ```
+      [
+        {
+          type: "checking";
+          total: 1000.00;
+        },
+        {
+          type: "savings";
+          total: 5000.00;
+        },
+        ...
+      ]
+      ```
 
-3. Get historical balances of user
-
-```GET /balances/history/:username```
+### GET ```/balances/history/:username```
+- Description: Get all balance records of a specified user ordered by date in ascending order.
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Response:
-  - Status 200: Returns an array of DatedNetWorth objects
-  ```
-  interface DatedNetWorth {
-    date: string;
-    Total: number;
-  }
-  ```
+  * ```200 OK```: Returns an array of DatedNetWorth objects
+      ```
+      [
+        {
+          date: "2024-09-01";
+          netWorth: 6000.00;
+        },
+        ...
+      ]
+      ```
 
-4. Get current and previous month balances of user for comparison
-
-```GET /balances/comparison/:username```
+### GET ```/balances/comparison/:username```
+- Description: Get current and previous month balances of user for comparison
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Response:
-  - Status 200: Returns an array of MonthlyAmountComparison objects
-  ```
-  interface MonthlyAmountComparison {
-    recentAmount: number;
-    previousAmount: number;
-    available: boolean;
-  }
-  ```
+  * ```200 OK```: Returns an array of MonthlyAmountComparison objects
+      ```
+      [
+        {
+          recentAmount: 6000.00;
+          previousAmount: 5000.00;
+          available: true;
+        },
+        ...
+      ]
+      ```
 
 ### Users
-1. Create new user
-
-```POST /users/signup```
+### POST ```/users/signup```
+- Description: Create a new user account
 - Request Body:
-  - ```username``` (string): Username
-  - ```password``` (string): Password
+  * ```username```: Username
+  * ```password```: Password
 - Response:
-  - Status 200: Returns a JWT token for authentication
-  - Status 400: Missing username/password in request body OR other error
-  - Status 409: Username already exists
+  * ```200 OK```: Returns a JWT token for authentication
+  * ```400 Bad Request```: Missing username/password in request body OR other error
+  * ```409 Conflict```: Username already exists
 
-2. Sign in user
-
-```POST /users/signin```
+### POST ```/users/signin```
+- Description: Sign in to an existing user account
 - Request Body:
-  - ```username``` (string): Username
-  - ```password``` (string): Password
+  * ```username```: Username
+  * ```password```: Password
 - Response:
-  - Status 200: Returns a JWT token for authentication
-  - Status 400: Missing username/password in request body OR other error
-  - Status 401: Incorrect credentials provided
-  - Status 404: User not found
+  * ```200 OK```: Returns a JWT token for authentication
+  * ```400 Bad Request```: Missing username/password in request body OR other error
+  * ```401 Unauthorized```: Incorrect credentials provided
+  * ```404 Not Found```: User not found
 
 ### User Tokens and Plaid Configuration
 Note: refer to Plaid API documentation for more information on Plaid API endpoints
 
-1. Create a Plaid Link token for a user
-
-```POST /user-tokens/:username```
+### POST ```/user-tokens/:username```
+- Description: Create a Plaid Link token for a user. This token is used to initialize the Plaid Link flow.
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Response:
-  - Status 200: Returns a Plaid link token
-  - Status 500: Server Error
+  * ```200 OK```: Returns a Plaid link token
+  * ```500 Internal Server Error```: Returns an error message if the token cannot be created (usually a problem connecting to the Plaid API)
 
-2. Create a permanent access token for a user in exchange for a Plaid Link token
-
-```POST /user-tokens/create/:username```
+### POST ```/user-tokens/create/:username```
+- Description: Create a permanent access token for a user in exchange for a Plaid Link token to be stored.
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Request Body:
-  - ```public_token``` (string): Public/Link token from Plaid Link
+  * ```public_token```: Public/Link token from Plaid Link
 - Response:
-  - Status 200: Returns a Plaid permanent access token to be stored
-  - Status 500: Server Error
+  * ```200 OK```: Returns a Plaid link token
+  * ```500 Internal Server Error```: Returns an error message if the token cannot be created (usually a problem connecting to the Plaid API)
 
-3. Get a user's permanent access token
-
-```GET /user-tokens/:username```
+### GET ```/user-tokens/:username```
+- Description: Get a user's permanent access token
+- Headers:
+  * ```Authorization```: JWT token
+- Parameters:
+  * ```username```: The username of the account holder
 - Response:
-  - Status 200: Returns a Plaid permanent access token
+  - ```200 OK```: Returns a Plaid permanent access token
 
 ### License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-### Bonus Message
-This project was a massive stepping stone in my development journey. It isn't perfect, but I learned a lot from it. I hope you find it useful in some way. Thank you for reading this far.
+This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details
